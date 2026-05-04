@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useTransition } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Heart } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
@@ -14,45 +14,48 @@ type Props = {
 
 export function WishlistButton({ productId, initialInWishlist, className = "" }: Props) {
   const [inWishlist, setInWishlist] = useState(initialInWishlist ?? false)
-  const [checked, setChecked] = useState(initialInWishlist !== undefined)
-  const [isPending, startTransition] = useTransition()
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
+  // Only fetch from DB when the server didn't provide initial state
   useEffect(() => {
-    if (checked) return
+    if (initialInWishlist !== undefined) return
     const supabase = createClient()
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) { setChecked(true); return }
+      if (!user) return
       supabase
         .from("wishlists")
         .select("id")
         .eq("product_id", productId)
         .eq("user_id", user.id)
         .maybeSingle()
-        .then(({ data }) => {
-          setInWishlist(!!data)
-          setChecked(true)
-        })
+        .then(({ data }) => setInWishlist(!!data))
     })
-  }, [productId, checked])
+  }, [productId, initialInWishlist])
 
-  function handleClick(e: React.MouseEvent) {
+  async function handleClick(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
+    if (loading) return
 
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (!user) {
-        router.push(`/account/login?next=${encodeURIComponent(window.location.pathname)}`)
-        return
-      }
-      const optimistic = !inWishlist
-      setInWishlist(optimistic)
-      startTransition(async () => {
-        const result = await toggleWishlist(productId)
-        if (!result.ok) setInWishlist(!optimistic)
-      })
-    })
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+      router.push(`/account/login?next=${encodeURIComponent(window.location.pathname)}`)
+      return
+    }
+
+    const next = !inWishlist
+    setInWishlist(next) // optimistic
+    setLoading(true)
+
+    try {
+      const result = await toggleWishlist(productId)
+      if (!result.ok) setInWishlist(!next) // revert on failure
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -60,7 +63,7 @@ export function WishlistButton({ productId, initialInWishlist, className = "" }:
       type="button"
       aria-label={inWishlist ? "Убрать из избранного" : "Добавить в избранное"}
       onClick={handleClick}
-      disabled={isPending}
+      disabled={loading}
       className={`flex items-center justify-center transition-opacity disabled:opacity-60 ${className}`}
     >
       <Heart
