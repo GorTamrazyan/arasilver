@@ -29,8 +29,14 @@ export function LoginForm() {
     }
 
     const isAdmin = data.user?.user_metadata?.is_admin === true
-    const destination = next !== "/account" ? next : isAdmin ? "/admin" : "/account"
-    router.push(destination)
+    if (isAdmin) {
+      await supabase.auth.signOut()
+      setError("Для входа в админ-панель используйте /admin/login")
+      setLoading(false)
+      return
+    }
+
+    router.push(next)
     router.refresh()
   }
 
