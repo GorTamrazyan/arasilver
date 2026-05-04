@@ -26,22 +26,22 @@ export default async function AccountLayout({ children }: { children: React.Reac
           <h1 className="mt-3 font-serif text-4xl">{displayName}</h1>
         </div>
 
-        <div className="grid gap-10 lg:grid-cols-[220px_1fr] lg:gap-16">
+        <div className="grid gap-12 lg:grid-cols-[220px_1fr] lg:gap-20">
           <aside>
-            <nav className="flex flex-row gap-1 overflow-x-auto lg:flex-col">
+            <nav className="flex flex-row gap-0 overflow-x-auto border-b border-border/60 lg:flex-col lg:border-b-0">
               {accountLinks.map((l) => (
                 <Link
                   key={l.href}
                   href={l.href}
-                  className="whitespace-nowrap border-b border-border/60 py-3 text-[11px] tracking-[0.2em] text-muted-foreground uppercase transition-colors hover:text-foreground lg:border-b lg:border-t-0"
+                  className="whitespace-nowrap border-b border-border/60 py-4 pr-6 text-[11px] tracking-[0.2em] text-muted-foreground uppercase transition-colors hover:text-foreground lg:pr-0"
                 >
                   {l.label}
                 </Link>
               ))}
-              <form action={signOut}>
+              <form action={signOut} className="lg:mt-4">
                 <button
                   type="submit"
-                  className="w-full whitespace-nowrap border-b border-border/60 py-3 text-left text-[11px] tracking-[0.2em] text-muted-foreground uppercase transition-colors hover:text-foreground"
+                  className="w-full whitespace-nowrap border-b border-border/60 py-4 text-left text-[11px] tracking-[0.2em] text-muted-foreground uppercase transition-colors hover:text-foreground"
                 >
                   Выйти
                 </button>
@@ -49,7 +49,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
             </nav>
           </aside>
 
-          <main>{children}</main>
+          <main className="min-w-0">{children}</main>
         </div>
       </div>
       <SiteFooter />

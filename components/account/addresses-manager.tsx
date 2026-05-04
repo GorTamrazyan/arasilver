@@ -80,14 +80,14 @@ export function AddressesManager({ initialAddresses }: { initialAddresses: Addre
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {addresses.length === 0 && !showForm && (
         <p className="text-sm text-muted-foreground">Нет сохранённых адресов.</p>
       )}
 
       <div className="space-y-3">
         {addresses.map((addr) => (
-          <div key={addr.id} className="border border-border p-5">
+          <div key={addr.id} className="border border-border p-7">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="font-serif text-base">{addr.full_name}</p>
@@ -137,7 +137,7 @@ export function AddressesManager({ initialAddresses }: { initialAddresses: Addre
       )}
 
       {showForm && (
-        <form onSubmit={onSubmit} className="space-y-5 border border-border p-6">
+        <form onSubmit={onSubmit} className="space-y-6 border border-border p-8">
           <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">
             {editing ? "Изменить адрес" : "Новый адрес"}
           </p>

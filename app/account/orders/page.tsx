@@ -42,7 +42,7 @@ export default async function OrdersPage() {
           <Link
             key={o.id}
             href={`/account/orders/${o.id}`}
-            className="group flex items-start justify-between gap-4 py-5 -mx-2 px-2 transition-colors hover:bg-secondary/30"
+            className="group flex items-start justify-between gap-4 py-7 -mx-2 px-2 transition-colors hover:bg-secondary/30"
           >
             <div>
               <p className="font-serif text-xl">{o.order_number}</p>

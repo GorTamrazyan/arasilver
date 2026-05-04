@@ -31,7 +31,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const items = (itemsData ?? []) as OrderItem[]
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <div>
         <Link href="/account/orders" className="text-xs tracking-[0.2em] text-muted-foreground uppercase hover:text-foreground">
           ← К заказам
@@ -54,7 +54,7 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
         <p className="mb-4 text-xs tracking-[0.25em] text-muted-foreground uppercase">Товары</p>
         <ul className="divide-y divide-border/60 border-y border-border/60">
           {items.map((item) => (
-            <li key={item.id} className="flex gap-4 py-4">
+            <li key={item.id} className="flex gap-5 py-6">
               <div className="relative aspect-[4/5] w-16 shrink-0 overflow-hidden bg-muted">
                 {item.product_image && (
                   <Image src={item.product_image} alt={item.product_name} fill sizes="64px" className="object-cover" />

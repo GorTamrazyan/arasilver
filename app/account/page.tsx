@@ -27,8 +27,8 @@ export default async function AccountDashboardPage() {
     .limit(3)
 
   return (
-    <div className="space-y-10">
-      <div className="grid gap-5 sm:grid-cols-2">
+    <div className="space-y-14">
+      <div className="grid gap-6 sm:grid-cols-2">
         <Stat label="Заказов" value={String(orderCount ?? 0)} href="/account/orders" />
         <Stat label="Избранных" value={String(wishlistCount ?? 0)} href="/account/wishlist" />
       </div>
@@ -46,7 +46,7 @@ export default async function AccountDashboardPage() {
               <Link
                 key={o.id}
                 href={`/account/orders/${o.id}`}
-                className="flex items-center justify-between py-4 hover:bg-secondary/30 -mx-2 px-2 transition-colors"
+                className="flex items-center justify-between py-5 hover:bg-secondary/30 -mx-2 px-2 transition-colors"
               >
                 <div>
                   <p className="font-serif text-base">{o.order_number}</p>
@@ -64,7 +64,7 @@ export default async function AccountDashboardPage() {
         </div>
       )}
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <QuickLink href="/account/orders" label="История заказов" />
         <QuickLink href="/account/wishlist" label="Избранное" />
         <QuickLink href="/account/addresses" label="Адреса доставки" />
@@ -77,7 +77,7 @@ export default async function AccountDashboardPage() {
 
 function Stat({ label, value, href }: { label: string; value: string; href: string }) {
   return (
-    <Link href={href} className="block border border-border bg-secondary/30 p-6 transition-colors hover:bg-secondary/50">
+    <Link href={href} className="block border border-border bg-secondary/30 p-8 transition-colors hover:bg-secondary/50">
       <p className="text-[10px] tracking-[0.3em] text-muted-foreground uppercase">{label}</p>
       <p className="mt-3 font-serif text-3xl tabular-nums">{value}</p>
     </Link>
@@ -88,7 +88,7 @@ function QuickLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className="border border-border/60 px-5 py-4 text-xs tracking-[0.2em] uppercase transition-colors hover:border-foreground hover:bg-secondary/30"
+      className="border border-border/60 px-6 py-5 text-xs tracking-[0.2em] uppercase transition-colors hover:border-foreground hover:bg-secondary/30"
     >
       {label} →
     </Link>

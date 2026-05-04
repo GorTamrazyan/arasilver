@@ -51,8 +51,8 @@ export function ProfileForm({ fullName, phone, email }: Props) {
   }
 
   return (
-    <div className="space-y-12">
-      <form onSubmit={onProfileSubmit} className="space-y-5 max-w-lg">
+    <div className="space-y-16">
+      <form onSubmit={onProfileSubmit} className="space-y-6 max-w-lg">
         <h2 className="font-serif text-2xl">Личные данные</h2>
         <label className="block">
           <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Имя</span>
@@ -96,7 +96,7 @@ export function ProfileForm({ fullName, phone, email }: Props) {
       </form>
 
       <div className="border-t border-border/60 pt-10">
-        <form onSubmit={onPassSubmit} className="space-y-5 max-w-lg">
+        <form onSubmit={onPassSubmit} className="space-y-6 max-w-lg">
           <h2 className="font-serif text-2xl">Изменить пароль</h2>
           <label className="block">
             <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Текущий пароль</span>
