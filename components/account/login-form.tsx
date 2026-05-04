@@ -20,7 +20,7 @@ export function LoginForm() {
     setError(null)
 
     const supabase = createClient()
-    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password })
 
     if (signInError) {
       setError("Неверный email или пароль")
@@ -28,7 +28,9 @@ export function LoginForm() {
       return
     }
 
-    router.push(next)
+    const isAdmin = data.user?.user_metadata?.is_admin === true
+    const destination = next !== "/account" ? next : isAdmin ? "/admin" : "/account"
+    router.push(destination)
     router.refresh()
   }
 
