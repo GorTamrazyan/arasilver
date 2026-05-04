@@ -65,6 +65,29 @@ export const CATEGORY_LABELS: Record<ProductCategory, string> = {
   necklaces: "Колье",
 }
 
+export type Address = {
+  id: string
+  user_id: string
+  full_name: string
+  phone: string
+  street: string
+  city: string
+  country: string
+  postal: string | null
+  is_default: boolean
+  created_at: string
+}
+
+export type AddressInput = Omit<Address, "id" | "user_id" | "created_at">
+
+export type WishlistItem = {
+  id: string
+  user_id: string
+  product_id: string
+  created_at: string
+  products: Product
+}
+
 export const STATUS_LABELS: Record<OrderStatus, string> = {
   pending: "Новый",
   confirmed: "Подтверждён",

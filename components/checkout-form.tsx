@@ -7,14 +7,39 @@ import { useState } from "react"
 import { useCart } from "./cart/cart-provider"
 import { formatPrice } from "@/lib/format"
 import { createOrder } from "@/app/actions/orders"
+import type { Address } from "@/lib/types"
 
 const SHIPPING_COST = 10
 
-export function CheckoutForm() {
+type UserPrefill = {
+  name: string
+  email: string
+  phone: string
+} | null
+
+type Props = {
+  userPrefill?: UserPrefill
+  savedAddresses?: Address[]
+}
+
+export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
   const { items, subtotal, clear } = useCart()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Controlled shipping fields so saved address can autofill them
+  const [address, setAddress] = useState("")
+  const [city, setCity] = useState("")
+  const [country, setCountry] = useState("Россия")
+  const [postal, setPostal] = useState("")
+
+  function applyAddress(addr: Address) {
+    setAddress(addr.street)
+    setCity(addr.city)
+    setCountry(addr.country)
+    setPostal(addr.postal ?? "")
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -28,17 +53,21 @@ export function CheckoutForm() {
       customer_name: String(fd.get("name") ?? ""),
       customer_email: String(fd.get("email") ?? ""),
       customer_phone: String(fd.get("phone") ?? ""),
-      shipping_address: String(fd.get("address") ?? ""),
-      shipping_city: String(fd.get("city") ?? ""),
-      shipping_country: String(fd.get("country") ?? ""),
-      shipping_postal: String(fd.get("postal") ?? ""),
+      shipping_address: address || String(fd.get("address") ?? ""),
+      shipping_city: city || String(fd.get("city") ?? ""),
+      shipping_country: country,
+      shipping_postal: postal || String(fd.get("postal") ?? ""),
       notes: String(fd.get("notes") ?? ""),
       items,
     })
 
     if (result.ok) {
       clear()
-      router.push(`/order/${result.order_id}?number=${encodeURIComponent(result.order_number)}`)
+      const isGuest = !userPrefill
+      const email = String(fd.get("email") ?? "")
+      const query = new URLSearchParams({ number: result.order_number })
+      if (isGuest) query.set("email", email)
+      router.push(`/order/${result.order_id}?${query}`)
     } else {
       setError(result.error)
       setLoading(false)
@@ -64,23 +93,101 @@ export function CheckoutForm() {
   return (
     <form onSubmit={onSubmit} className="grid gap-12 lg:grid-cols-[1fr_420px] lg:gap-16">
       <div className="space-y-8">
+        {!userPrefill && (
+          <div className="border border-border/60 bg-secondary/30 px-5 py-4 text-sm">
+            Уже есть аккаунт?{" "}
+            <Link
+              href="/account/login?next=/checkout"
+              className="text-foreground underline-offset-4 hover:underline"
+            >
+              Войти
+            </Link>{" "}
+            — данные заполнятся автоматически.
+          </div>
+        )}
+
         <fieldset className="space-y-5">
           <legend className="mb-4 text-xs tracking-[0.25em] text-muted-foreground uppercase">Контакты</legend>
-          <Field label="Имя и фамилия" name="name" required />
+          <Field label="Имя и фамилия" name="name" required defaultValue={userPrefill?.name} />
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Email" name="email" type="email" required />
-            <Field label="Телефон" name="phone" type="tel" required placeholder="+7 ..." />
+            <Field label="Email" name="email" type="email" required defaultValue={userPrefill?.email} />
+            <Field label="Телефон" name="phone" type="tel" required placeholder="+7 ..." defaultValue={userPrefill?.phone} />
           </div>
         </fieldset>
 
         <fieldset className="space-y-5">
           <legend className="mb-4 text-xs tracking-[0.25em] text-muted-foreground uppercase">Адрес доставки</legend>
-          <Field label="Адрес (улица, дом, квартира)" name="address" required />
+
+          {savedAddresses.length > 0 && (
+            <div>
+              <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">
+                Сохранённые адреса
+              </span>
+              <select
+                onChange={(e) => {
+                  const addr = savedAddresses.find((a) => a.id === e.target.value)
+                  if (addr) applyAddress(addr)
+                }}
+                defaultValue=""
+                className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+              >
+                <option value="" disabled>Выбрать адрес…</option>
+                {savedAddresses.map((a) => (
+                  <option key={a.id} value={a.id}>
+                    {a.street}, {a.city}{a.is_default ? " (по умолчанию)" : ""}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <label className="block">
+            <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">
+              Адрес (улица, дом, квартира) *
+            </span>
+            <input
+              type="text"
+              name="address"
+              required
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+            />
+          </label>
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Город" name="city" required />
-            <Field label="Индекс" name="postal" />
+            <label className="block">
+              <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Город *</span>
+              <input
+                type="text"
+                name="city"
+                required
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+              />
+            </label>
+            <label className="block">
+              <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Индекс</span>
+              <input
+                type="text"
+                name="postal"
+                value={postal}
+                onChange={(e) => setPostal(e.target.value)}
+                className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+              />
+            </label>
           </div>
-          <Field label="Страна" name="country" required defaultValue="Россия" />
+          <label className="block">
+            <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Страна *</span>
+            <input
+              type="text"
+              name="country"
+              required
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+            />
+          </label>
         </fieldset>
 
         <fieldset>

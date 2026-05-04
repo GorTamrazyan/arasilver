@@ -1,8 +1,33 @@
+import { createClient } from "@/lib/supabase/server"
 import { SiteNav } from "@/components/site-nav"
 import { SiteFooter } from "@/components/site-footer"
 import { CheckoutForm } from "@/components/checkout-form"
+import type { Address } from "@/lib/types"
 
-export default function CheckoutPage() {
+export const dynamic = "force-dynamic"
+
+export default async function CheckoutPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  let savedAddresses: Address[] = []
+  if (user) {
+    const { data } = await supabase
+      .from("addresses")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("is_default", { ascending: false })
+    savedAddresses = (data ?? []) as Address[]
+  }
+
+  const userPrefill = user
+    ? {
+        name: user.user_metadata?.full_name ?? "",
+        email: user.email ?? "",
+        phone: user.user_metadata?.phone ?? "",
+      }
+    : null
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <SiteNav />
@@ -13,7 +38,7 @@ export default function CheckoutPage() {
             Доставка и <em className="font-light italic text-muted-foreground">контакты</em>
           </h1>
         </div>
-        <CheckoutForm />
+        <CheckoutForm userPrefill={userPrefill} savedAddresses={savedAddresses} />
       </section>
       <SiteFooter />
     </main>

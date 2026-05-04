@@ -7,9 +7,11 @@ import { SiteNav } from "@/components/site-nav"
 import { SiteFooter } from "@/components/site-footer"
 import { ProductCard } from "@/components/product-card"
 import { AddToCartButton } from "@/components/add-to-cart-button"
+import { WishlistButton } from "@/components/wishlist-button"
 import type { Product } from "@/lib/types"
 import { CATEGORY_LABELS } from "@/lib/types"
 import { formatPrice } from "@/lib/format"
+import { getWishlistIds } from "@/app/actions/wishlist"
 
 export const dynamic = "force-dynamic"
 
@@ -26,6 +28,8 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
 
   if (!product) notFound()
   const p = product as Product
+
+  const wishlistIds = await getWishlistIds()
 
   const { data: relatedData } = await supabase
     .from("products")
@@ -92,7 +96,7 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
               </div>
             </dl>
 
-            <div className="mt-8">
+            <div className="mt-8 flex items-center gap-4">
               <AddToCartButton
                 product={{
                   product_id: p.id,
@@ -102,6 +106,11 @@ export default async function ProductPage({ params }: { params: Promise<{ slug: 
                   image_url: p.image_url,
                 }}
                 disabled={p.stock === 0}
+              />
+              <WishlistButton
+                productId={p.id}
+                initialInWishlist={wishlistIds.includes(p.id)}
+                className="h-12 w-12 border border-border hover:border-foreground"
               />
             </div>
 

@@ -4,8 +4,16 @@ import { ArrowUpRight } from "lucide-react"
 import type { Product } from "@/lib/types"
 import { CATEGORY_LABELS } from "@/lib/types"
 import { formatPrice } from "@/lib/format"
+import { WishlistButton } from "./wishlist-button"
 
-export function ProductCard({ product }: { product: Product }) {
+type Props = {
+  product: Product
+  wishlistIds?: string[]
+}
+
+export function ProductCard({ product, wishlistIds }: Props) {
+  const inWishlist = wishlistIds?.includes(product.id)
+
   return (
     <Link href={`/shop/${product.slug}`} className="group block">
       <div className="relative aspect-[4/5] overflow-hidden bg-muted">
@@ -28,8 +36,15 @@ export function ProductCard({ product }: { product: Product }) {
             Нет в наличии
           </span>
         )}
-        <div className="absolute right-4 bottom-4 flex h-10 w-10 items-center justify-center bg-background opacity-0 transition-opacity group-hover:opacity-100">
-          <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+        <div className="absolute right-4 bottom-4 flex items-center gap-2">
+          <WishlistButton
+            productId={product.id}
+            initialInWishlist={inWishlist}
+            className="flex h-9 w-9 items-center justify-center bg-background opacity-0 transition-opacity group-hover:opacity-100"
+          />
+          <div className="flex h-10 w-10 items-center justify-center bg-background opacity-0 transition-opacity group-hover:opacity-100">
+            <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+          </div>
         </div>
       </div>
 

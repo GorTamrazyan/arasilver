@@ -1,4 +1,5 @@
 import Link from "next/link"
+import { createClient } from "@/lib/supabase/server"
 import { SiteNav } from "@/components/site-nav"
 import { SiteFooter } from "@/components/site-footer"
 
@@ -9,11 +10,15 @@ export default async function OrderPage({
   searchParams,
 }: {
   params: Promise<{ id: string }>
-  searchParams: Promise<{ number?: string }>
+  searchParams: Promise<{ number?: string; email?: string }>
 }) {
   const { id } = await params
-  const { number } = await searchParams
+  const { number, email } = await searchParams
   const displayNumber = number ?? id.slice(0, 8).toUpperCase()
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const isGuest = !user && !!email
 
   return (
     <main className="min-h-screen bg-background text-foreground">
@@ -33,6 +38,21 @@ export default async function OrderPage({
           <p className="text-[10px] tracking-[0.3em] text-muted-foreground uppercase">Номер заказа</p>
           <p className="mt-2 font-serif text-3xl tracking-wider">{displayNumber}</p>
         </div>
+
+        {isGuest && (
+          <div className="mt-10 w-full max-w-md border border-border/60 bg-secondary/30 px-6 py-6 text-left">
+            <p className="font-serif text-xl">Отслеживайте заказ онлайн</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Создайте аккаунт, чтобы видеть статус заказа, историю покупок и сохранять избранные украшения.
+            </p>
+            <Link
+              href={`/account/register?email=${encodeURIComponent(email!)}`}
+              className="mt-5 inline-block bg-foreground px-6 py-3 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90"
+            >
+              Создать аккаунт
+            </Link>
+          </div>
+        )}
 
         <div className="mt-12 flex flex-col gap-3 sm:flex-row">
           <Link

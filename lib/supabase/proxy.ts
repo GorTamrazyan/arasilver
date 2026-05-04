@@ -45,5 +45,22 @@ export async function updateSession(request: NextRequest) {
     }
   }
 
+  // Protect account routes
+  const isAccountPublic =
+    request.nextUrl.pathname.startsWith("/account/login") ||
+    request.nextUrl.pathname.startsWith("/account/register") ||
+    request.nextUrl.pathname.startsWith("/account/forgot-password") ||
+    request.nextUrl.pathname.startsWith("/account/reset-password")
+
+  if (request.nextUrl.pathname.startsWith("/account") && !isAccountPublic) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      const next = request.nextUrl.pathname + request.nextUrl.search
+      url.pathname = "/account/login"
+      url.searchParams.set("next", next)
+      return NextResponse.redirect(url)
+    }
+  }
+
   return supabaseResponse
 }

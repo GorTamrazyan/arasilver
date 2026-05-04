@@ -34,6 +34,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     if (!input.shipping_country.trim()) return { ok: false, error: "Укажите страну" }
 
     const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
 
     // Re-fetch product prices from DB to prevent tampering
     const ids = input.items.map((i) => i.product_id)
@@ -85,6 +86,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
         total,
         currency: "USD",
         status: "pending",
+        ...(user ? { user_id: user.id } : {}),
       })
       .select("id, order_number")
       .single()
