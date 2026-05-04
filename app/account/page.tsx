@@ -9,14 +9,8 @@ export default async function AccountDashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   const [{ count: orderCount }, { count: wishlistCount }] = await Promise.all([
-    supabase
-      .from("orders")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user!.id),
-    supabase
-      .from("wishlists")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user!.id),
+    supabase.from("orders").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
+    supabase.from("wishlists").select("id", { count: "exact", head: true }).eq("user_id", user!.id),
   ])
 
   const { data: recentOrders } = await supabase
@@ -27,7 +21,8 @@ export default async function AccountDashboardPage() {
     .limit(3)
 
   return (
-    <div className="space-y-14">
+    <div className="space-y-16">
+
       <div className="grid gap-6 sm:grid-cols-2">
         <Stat label="Заказов" value={String(orderCount ?? 0)} href="/account/orders" />
         <Stat label="Избранных" value={String(wishlistCount ?? 0)} href="/account/wishlist" />
@@ -35,7 +30,7 @@ export default async function AccountDashboardPage() {
 
       {recentOrders && recentOrders.length > 0 && (
         <div>
-          <div className="mb-5 flex items-baseline justify-between">
+          <div className="mb-6 flex items-baseline justify-between">
             <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">Последние заказы</p>
             <Link href="/account/orders" className="text-xs text-muted-foreground hover:text-foreground">
               Все →
@@ -46,17 +41,17 @@ export default async function AccountDashboardPage() {
               <Link
                 key={o.id}
                 href={`/account/orders/${o.id}`}
-                className="flex items-center justify-between py-5 hover:bg-secondary/30 -mx-2 px-2 transition-colors"
+                className="flex items-center justify-between py-6 -mx-3 px-3 transition-colors hover:bg-secondary/30"
               >
                 <div>
-                  <p className="font-serif text-base">{o.order_number}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="font-serif text-lg">{o.order_number}</p>
+                  <p className="mt-2 text-xs text-muted-foreground">
                     {new Date(o.created_at).toLocaleDateString("ru-RU")}
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="text-sm tabular-nums">{formatPrice(o.total)}</p>
-                  <p className="mt-1 text-[10px] tracking-[0.15em] text-muted-foreground uppercase">{o.status}</p>
+                  <p className="mt-2 text-[10px] tracking-[0.15em] text-muted-foreground uppercase">{o.status}</p>
                 </div>
               </Link>
             ))}
@@ -71,15 +66,16 @@ export default async function AccountDashboardPage() {
         <QuickLink href="/account/profile" label="Редактировать профиль" />
         <QuickLink href="/shop" label="Перейти в каталог" />
       </div>
+
     </div>
   )
 }
 
 function Stat({ label, value, href }: { label: string; value: string; href: string }) {
   return (
-    <Link href={href} className="block border border-border bg-secondary/30 p-8 transition-colors hover:bg-secondary/50">
+    <Link href={href} className="block border border-border bg-secondary/30 p-10 transition-colors hover:bg-secondary/50">
       <p className="text-[10px] tracking-[0.3em] text-muted-foreground uppercase">{label}</p>
-      <p className="mt-3 font-serif text-3xl tabular-nums">{value}</p>
+      <p className="mt-4 font-serif text-5xl tabular-nums">{value}</p>
     </Link>
   )
 }
@@ -88,7 +84,7 @@ function QuickLink({ href, label }: { href: string; label: string }) {
   return (
     <Link
       href={href}
-      className="border border-border/60 px-6 py-5 text-xs tracking-[0.2em] uppercase transition-colors hover:border-foreground hover:bg-secondary/30"
+      className="border border-border/60 px-6 py-6 text-xs tracking-[0.2em] uppercase transition-colors hover:border-foreground hover:bg-secondary/30"
     >
       {label} →
     </Link>
