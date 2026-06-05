@@ -1,8 +1,8 @@
 import Image from "next/image"
-import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { Link } from "@/i18n/navigation"
 import type { Product } from "@/lib/types"
-import { CATEGORY_LABELS } from "@/lib/types"
 import { formatPrice } from "@/lib/format"
 import { WishlistButton } from "./wishlist-button"
 
@@ -12,6 +12,7 @@ type Props = {
 }
 
 export function ProductCard({ product, wishlistIds }: Props) {
+  const t = useTranslations()
   const inWishlist = wishlistIds?.includes(product.id)
 
   return (
@@ -28,12 +29,12 @@ export function ProductCard({ product, wishlistIds }: Props) {
         )}
         {product.stock <= 3 && product.stock > 0 && (
           <span className="absolute top-4 left-4 bg-background px-3 py-1 text-[10px] tracking-[0.25em] uppercase">
-            Осталось {product.stock}
+            {t("Product.lowStock", { stock: product.stock })}
           </span>
         )}
         {product.stock === 0 && (
           <span className="absolute top-4 left-4 bg-foreground px-3 py-1 text-[10px] tracking-[0.25em] text-background uppercase">
-            Нет в наличии
+            {t("Product.outOfStock")}
           </span>
         )}
         <div className="absolute right-4 bottom-4 flex items-center gap-2">
@@ -51,7 +52,7 @@ export function ProductCard({ product, wishlistIds }: Props) {
       <div className="mt-5 flex items-start justify-between gap-3">
         <div>
           <p className="text-[11px] tracking-[0.25em] text-muted-foreground uppercase">
-            {CATEGORY_LABELS[product.category]}
+            {t(`Categories.${product.category}`)}
           </p>
           <h3 className="mt-2 font-serif text-xl text-foreground">{product.name}</h3>
         </div>

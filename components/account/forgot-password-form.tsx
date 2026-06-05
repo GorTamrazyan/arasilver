@@ -1,9 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { useLocale, useTranslations } from "next-intl"
 import { createClient } from "@/lib/supabase/client"
 
 export function ForgotPasswordForm() {
+  const t = useTranslations("Auth")
+  const locale = useLocale()
   const [email, setEmail] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -15,7 +18,7 @@ export function ForgotPasswordForm() {
     setError(null)
 
     const supabase = createClient()
-    const redirectTo = `${window.location.origin}/auth/callback?next=/account/reset-password`
+    const redirectTo = `${window.location.origin}/${locale}/auth/callback?next=/${locale}/account/reset-password`
 
     const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, { redirectTo })
 
@@ -32,9 +35,9 @@ export function ForgotPasswordForm() {
   if (success) {
     return (
       <div className="border border-border bg-secondary/30 p-6 text-center">
-        <p className="font-serif text-2xl">Письмо отправлено</p>
+        <p className="font-serif text-2xl">{t("forgotSent")}</p>
         <p className="mt-3 text-sm text-muted-foreground">
-          Проверьте почту <strong>{email}</strong> и перейдите по ссылке для сброса пароля.
+          {t("forgotSentBody", { email })}
         </p>
       </div>
     )
@@ -43,7 +46,7 @@ export function ForgotPasswordForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <label className="block">
-        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Email</span>
+        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("emailLabel")}</span>
         <input
           type="email"
           value={email}
@@ -62,7 +65,7 @@ export function ForgotPasswordForm() {
         disabled={loading}
         className="w-full bg-foreground py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60"
       >
-        {loading ? "Отправляем..." : "Сбросить пароль"}
+        {loading ? t("sending") : t("resetPassword")}
       </button>
     </form>
   )

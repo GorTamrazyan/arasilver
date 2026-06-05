@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { AdminSignOut } from "./admin-sign-out"
 
-export function AdminShell({ children, active }: { children: ReactNode; active?: "orders" | "products" }) {
+export function AdminShell({ children, active }: { children: ReactNode; active?: "orders" | "products" | "media" }) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border bg-background">
@@ -23,6 +23,12 @@ export function AdminShell({ children, active }: { children: ReactNode; active?:
                 className={active === "products" ? "text-foreground" : "text-muted-foreground hover:text-foreground"}
               >
                 Товары
+              </Link>
+              <Link
+                href="/admin/media"
+                className={active === "media" ? "text-foreground" : "text-muted-foreground hover:text-foreground"}
+              >
+                Медиа
               </Link>
             </nav>
           </div>

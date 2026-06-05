@@ -2,9 +2,11 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { createClient } from "@/lib/supabase/client"
 
 export function AdminLoginForm() {
+  const t = useTranslations("Auth")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -28,7 +30,7 @@ export function AdminLoginForm() {
     const isAdmin = data.user?.user_metadata?.is_admin === true
     if (!isAdmin) {
       await supabase.auth.signOut()
-      setError("У этого аккаунта нет прав администратора.")
+      setError(t("adminNoRights"))
       setLoading(false)
       return
     }
@@ -40,7 +42,7 @@ export function AdminLoginForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <label className="block">
-        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Email</span>
+        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("emailLabel")}</span>
         <input
           type="email"
           value={email}
@@ -50,7 +52,7 @@ export function AdminLoginForm() {
         />
       </label>
       <label className="block">
-        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Пароль</span>
+        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("passwordLabel")}</span>
         <input
           type="password"
           value={password}
@@ -69,7 +71,7 @@ export function AdminLoginForm() {
         disabled={loading}
         className="w-full bg-foreground py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60"
       >
-        {loading ? "Входим..." : "Войти"}
+        {loading ? t("loggingIn") : t("login")}
       </button>
     </form>
   )

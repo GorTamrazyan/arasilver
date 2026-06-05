@@ -1,9 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { useLocale, useTranslations } from "next-intl"
 import { createClient } from "@/lib/supabase/client"
 
 export function AdminSignUpForm() {
+  const t = useTranslations("Auth")
+  const locale = useLocale()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -17,7 +20,7 @@ export function AdminSignUpForm() {
 
     const supabase = createClient()
     const redirectTo =
-      process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/auth/callback`
+      process.env.NEXT_PUBLIC_DEV_SUPABASE_REDIRECT_URL ?? `${window.location.origin}/${locale}/auth/callback`
 
     const { error: signUpError } = await supabase.auth.signUp({
       email,
@@ -41,10 +44,9 @@ export function AdminSignUpForm() {
   if (success) {
     return (
       <div className="border border-border bg-secondary/30 p-6 text-center">
-        <p className="font-serif text-2xl">Проверьте почту</p>
+        <p className="font-serif text-2xl">{t("checkEmailTitle")}</p>
         <p className="mt-3 text-sm text-muted-foreground">
-          Мы отправили письмо со ссылкой для подтверждения на <strong>{email}</strong>. После подтверждения вы сможете
-          войти в админ-панель.
+          {t("adminCheckEmailBody", { email })}
         </p>
       </div>
     )
@@ -53,7 +55,7 @@ export function AdminSignUpForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <label className="block">
-        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Email</span>
+        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("emailLabel")}</span>
         <input
           type="email"
           value={email}
@@ -63,7 +65,7 @@ export function AdminSignUpForm() {
         />
       </label>
       <label className="block">
-        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Пароль</span>
+        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("passwordLabel")}</span>
         <input
           type="password"
           value={password}
@@ -83,7 +85,7 @@ export function AdminSignUpForm() {
         disabled={loading}
         className="w-full bg-foreground py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60"
       >
-        {loading ? "Создаём..." : "Создать аккаунт"}
+        {loading ? t("creating") : t("createAccount")}
       </button>
     </form>
   )

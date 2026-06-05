@@ -2,9 +2,11 @@
 
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useTranslations } from "next-intl"
 import { resetPassword } from "@/app/actions/account"
 
 export function ResetPasswordForm() {
+  const t = useTranslations("Auth")
   const [password, setPassword] = useState("")
   const [confirm, setConfirm] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -14,7 +16,7 @@ export function ResetPasswordForm() {
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     if (password !== confirm) {
-      setError("Пароли не совпадают")
+      setError(t("passwordsDontMatch"))
       return
     }
     setLoading(true)
@@ -32,7 +34,7 @@ export function ResetPasswordForm() {
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <label className="block">
-        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Новый пароль</span>
+        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("newPasswordLabel")}</span>
         <input
           type="password"
           value={password}
@@ -43,7 +45,7 @@ export function ResetPasswordForm() {
         />
       </label>
       <label className="block">
-        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Повторите пароль</span>
+        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("confirmPasswordLabel")}</span>
         <input
           type="password"
           value={confirm}
@@ -63,7 +65,7 @@ export function ResetPasswordForm() {
         disabled={loading}
         className="w-full bg-foreground py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60"
       >
-        {loading ? "Сохраняем..." : "Сохранить пароль"}
+        {loading ? t("saving") : t("savePassword")}
       </button>
     </form>
   )

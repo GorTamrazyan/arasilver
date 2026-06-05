@@ -1,10 +1,11 @@
 "use client"
 
-import Link from "next/link"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { Menu, X, User, ChevronDown } from "lucide-react"
+import { Link, useRouter } from "@/i18n/navigation"
 import { CartButton } from "./cart/cart-button"
+import { LanguageSwitcher } from "./language-switcher"
 import { createClient } from "@/lib/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
 import {
@@ -15,14 +16,67 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-const navLinks = [
-  { label: "Каталог", href: "/shop" },
-  { label: "Кольца", href: "/shop?category=rings" },
-  { label: "Серьги", href: "/shop?category=earrings" },
-  { label: "О бренде", href: "/#about" },
-]
+const CATALOG_CATEGORIES = [
+  "rings",
+  "earrings",
+  "pendants",
+  "bracelets",
+  "necklaces",
+] as const
+
+function CatalogMenu() {
+  const t = useTranslations("Nav")
+  const tCategories = useTranslations("Categories")
+  const [open, setOpen] = useState(false)
+  let closeTimer: ReturnType<typeof setTimeout> | undefined
+
+  function handleEnter() {
+    if (closeTimer) clearTimeout(closeTimer)
+    setOpen(true)
+  }
+  function handleLeave() {
+    // Small delay so the cursor can travel from the trigger to the panel
+    // without the menu flickering closed.
+    closeTimer = setTimeout(() => setOpen(false), 120)
+  }
+
+  return (
+    <div className="relative" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+      <Link
+        href="/shop"
+        className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+      >
+        {t("catalog")}
+        <ChevronDown className="h-3 w-3 opacity-60" aria-hidden="true" />
+      </Link>
+
+      {open && (
+        <div className="absolute left-0 top-full z-50 pt-3">
+          <div className="min-w-[220px] border border-border bg-background shadow-lg">
+            <Link
+              href="/shop"
+              className="block border-b border-border/60 px-5 py-3 text-[11px] tracking-[0.2em] uppercase text-foreground/80 transition-colors hover:bg-secondary hover:text-foreground"
+            >
+              {tCategories("all")}
+            </Link>
+            {CATALOG_CATEGORIES.map((c) => (
+              <Link
+                key={c}
+                href={{ pathname: "/shop", query: { category: c } }}
+                className="block border-b border-border/60 px-5 py-3 text-[11px] tracking-[0.2em] uppercase text-foreground/80 transition-colors last:border-b-0 hover:bg-secondary hover:text-foreground"
+              >
+                {tCategories(c)}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
 
 function UserNavSection() {
+  const t = useTranslations("Nav")
   const [user, setUser] = useState<SupabaseUser | null | undefined>(undefined)
   const router = useRouter()
 
@@ -50,13 +104,13 @@ function UserNavSection() {
         href="/account/login"
         className="text-sm tracking-wide transition-colors hover:text-foreground"
       >
-        Войти
+        {t("login")}
       </Link>
     )
   }
 
   const isAdmin = user.user_metadata?.is_admin === true
-  const displayName = user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? "Аккаунт"
+  const displayName = user.user_metadata?.full_name ?? user.email?.split("@")[0] ?? t("account")
 
   return (
     <DropdownMenu>
@@ -71,29 +125,29 @@ function UserNavSection() {
         {isAdmin && (
           <>
             <DropdownMenuItem asChild className="rounded-none px-4 py-3 text-xs tracking-[0.15em] uppercase focus:bg-secondary">
-              <Link href="/admin">Админ-панель</Link>
+              <Link href="/admin">{t("adminPanel")}</Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-border" />
           </>
         )}
         <DropdownMenuItem asChild className="rounded-none px-4 py-3 text-xs tracking-[0.15em] uppercase focus:bg-secondary">
-          <Link href="/account">Мой кабинет</Link>
+          <Link href="/account">{t("myAccount")}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="rounded-none px-4 py-3 text-xs tracking-[0.15em] uppercase focus:bg-secondary">
-          <Link href="/account/orders">Заказы</Link>
+          <Link href="/account/orders">{t("orders")}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="rounded-none px-4 py-3 text-xs tracking-[0.15em] uppercase focus:bg-secondary">
-          <Link href="/account/wishlist">Избранное</Link>
+          <Link href="/account/wishlist">{t("wishlist")}</Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild className="rounded-none px-4 py-3 text-xs tracking-[0.15em] uppercase focus:bg-secondary">
-          <Link href="/account/addresses">Адреса</Link>
+          <Link href="/account/addresses">{t("addresses")}</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator className="bg-border" />
         <DropdownMenuItem
           onClick={handleSignOut}
           className="rounded-none px-4 py-3 text-xs tracking-[0.15em] uppercase text-muted-foreground focus:bg-secondary focus:text-foreground cursor-pointer"
         >
-          Выйти
+          {t("logout")}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -101,9 +155,15 @@ function UserNavSection() {
 }
 
 export function SiteNav() {
+  const t = useTranslations("Nav")
   const [open, setOpen] = useState(false)
   const [mobileUser, setMobileUser] = useState<SupabaseUser | null | undefined>(undefined)
   const router = useRouter()
+
+  const navLinks = [
+    { label: t("catalog"), href: "/shop" as const },
+    { label: t("about"), href: "/#about" as const },
+  ]
 
   useEffect(() => {
     const supabase = createClient()
@@ -126,21 +186,20 @@ export function SiteNav() {
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:px-10">
         <nav className="hidden items-center gap-8 text-sm tracking-wide text-foreground/80 md:flex">
-          {navLinks.map((l) => (
-            <Link key={l.href} href={l.href} className="transition-colors hover:text-foreground">
-              {l.label}
-            </Link>
-          ))}
+          <CatalogMenu />
+          <Link href="/#about" className="transition-colors hover:text-foreground">
+            {t("about")}
+          </Link>
         </nav>
 
-        <button type="button" aria-label="Открыть меню" onClick={() => setOpen(true)} className="md:hidden">
+        <button type="button" aria-label={t("openMenu")} onClick={() => setOpen(true)} className="md:hidden">
           <Menu className="h-5 w-5" aria-hidden="true" />
         </button>
 
         <Link
           href="/"
           className="font-serif text-2xl tracking-[0.35em] text-foreground md:text-[1.6rem]"
-          aria-label="ARASILVER — на главную"
+          aria-label={t("homeAria")}
         >
           ARASILVER
         </Link>
@@ -152,8 +211,9 @@ export function SiteNav() {
             rel="noreferrer noopener"
             className="hidden tracking-wide transition-colors hover:text-foreground lg:block"
           >
-            Instagram
+            {t("instagram")}
           </a>
+          <LanguageSwitcher />
           <UserNavSection />
           <CartButton />
         </div>
@@ -163,14 +223,15 @@ export function SiteNav() {
         <div className="fixed inset-0 z-50 bg-background md:hidden">
           <div className="flex h-16 items-center justify-between border-b border-border/60 px-5">
             <span className="font-serif text-xl tracking-[0.3em]">ARASILVER</span>
-            <button type="button" aria-label="Закрыть меню" onClick={() => setOpen(false)}>
+            <button type="button" aria-label={t("closeMenu")} onClick={() => setOpen(false)}>
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
           <nav className="flex flex-col gap-1 px-5 py-8">
-            {navLinks.map((l) => (
+            {navLinks.map((l, i) => (
               <Link
-                key={l.href}
+                key={i}
+                // @ts-expect-error -- mixed string/object hrefs for the locale-aware Link
                 href={l.href}
                 onClick={() => setOpen(false)}
                 className="border-b border-border/50 py-4 font-serif text-2xl text-foreground"
@@ -181,21 +242,21 @@ export function SiteNav() {
             {mobileUser ? (
               <>
                 <Link href="/account" onClick={() => setOpen(false)} className="border-b border-border/50 py-4 font-serif text-2xl text-foreground">
-                  Мой кабинет
+                  {t("myAccount")}
                 </Link>
                 <Link href="/account/orders" onClick={() => setOpen(false)} className="border-b border-border/50 py-4 font-serif text-2xl text-foreground">
-                  Заказы
+                  {t("orders")}
                 </Link>
                 <Link href="/account/wishlist" onClick={() => setOpen(false)} className="border-b border-border/50 py-4 font-serif text-2xl text-foreground">
-                  Избранное
+                  {t("wishlist")}
                 </Link>
                 <button onClick={handleMobileSignOut} className="mt-4 text-left text-sm tracking-[0.2em] text-muted-foreground uppercase">
-                  Выйти
+                  {t("logout")}
                 </button>
               </>
             ) : (
               <Link href="/account/login" onClick={() => setOpen(false)} className="border-b border-border/50 py-4 font-serif text-2xl text-foreground">
-                Войти
+                {t("login")}
               </Link>
             )}
             <a
@@ -206,6 +267,9 @@ export function SiteNav() {
             >
               Instagram ↗
             </a>
+            <div className="mt-6">
+              <LanguageSwitcher className="text-base" />
+            </div>
           </nav>
         </div>
       )}

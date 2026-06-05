@@ -9,7 +9,7 @@ values
     'Скульптурное кольцо из стерлингового серебра 925 пробы с фактурой ручной ковки. Каждое изделие уникально благодаря авторской обработке поверхности.',
     148.00,
     'USD',
-    '/product-ring.jpg',
+    'https://res.cloudinary.com/dqg1xso34/image/upload/arasilver/library/product-ring.jpg',
     '925 Sterling Silver',
     12,
     true
@@ -21,7 +21,7 @@ values
     'Изящные серьги-подвески с органическими линиями. Лёгкие, комфортные для ежедневного ношения. Застёжка швенза с силиконовой фиксацией.',
     96.00,
     'USD',
-    '/product-earrings.jpg',
+    'https://res.cloudinary.com/dqg1xso34/image/upload/arasilver/library/product-earrings.jpg',
     '925 Sterling Silver',
     18,
     true
@@ -33,7 +33,7 @@ values
     'Минималистичная подвеска с натуральным пресноводным жемчугом на серебряной цепочке длиной 45 см. Тонкая работа и выверенные пропорции.',
     124.00,
     'USD',
-    '/product-pendant.jpg',
+    'https://res.cloudinary.com/dqg1xso34/image/upload/arasilver/library/product-pendant.jpg',
     '925 Sterling Silver, Pearl',
     9,
     true
@@ -45,7 +45,7 @@ values
     'Тонкий серебряный браслет с плетением «якорь». Регулируемая длина 16–19 см, надёжный карабин. Подходит для многослойного ношения.',
     88.00,
     'USD',
-    '/product-bracelet.jpg',
+    'https://res.cloudinary.com/dqg1xso34/image/upload/arasilver/library/product-bracelet.jpg',
     '925 Sterling Silver',
     22,
     true
@@ -57,7 +57,7 @@ values
     'Двойное кольцо с переплетённой структурой. Символ соединения двух начал. Матовая и полированная поверхности на контрасте.',
     132.00,
     'USD',
-    '/product-ring.jpg',
+    'https://res.cloudinary.com/dqg1xso34/image/upload/arasilver/library/product-ring.jpg',
     '925 Sterling Silver',
     14,
     true
@@ -69,7 +69,7 @@ values
     'Серьги-капли с зеркальной полировкой. Классическая форма в современной интерпретации. Вес пары — 4.2 г.',
     78.00,
     'USD',
-    '/product-earrings.jpg',
+    'https://res.cloudinary.com/dqg1xso34/image/upload/arasilver/library/product-earrings.jpg',
     '925 Sterling Silver',
     20,
     true
@@ -81,7 +81,7 @@ values
     'Подвеска в форме растущей луны на цепочке 50 см. Тёплая текстура с мягким отражением света. Идеальна как базовое украшение.',
     108.00,
     'USD',
-    '/product-pendant.jpg',
+    'https://res.cloudinary.com/dqg1xso34/image/upload/arasilver/library/product-pendant.jpg',
     '925 Sterling Silver',
     11,
     true
@@ -93,7 +93,7 @@ values
     'Массивный браслет из плоских звеньев. Выразительное украшение с хорошим весом и драпировкой на запястье.',
     156.00,
     'USD',
-    '/product-bracelet.jpg',
+    'https://res.cloudinary.com/dqg1xso34/image/upload/arasilver/library/product-bracelet.jpg',
     '925 Sterling Silver',
     7,
     true

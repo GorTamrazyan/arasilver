@@ -1,9 +1,9 @@
 "use client"
 
 import Image from "next/image"
-import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { useTranslations } from "next-intl"
+import { Link, useRouter } from "@/i18n/navigation"
 import { useCart } from "./cart/cart-provider"
 import { formatPrice } from "@/lib/format"
 import { createOrder } from "@/app/actions/orders"
@@ -23,6 +23,7 @@ type Props = {
 }
 
 export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
+  const t = useTranslations("Checkout")
   const { items, subtotal, clear } = useCart()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -31,7 +32,7 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
   // Controlled shipping fields so saved address can autofill them
   const [address, setAddress] = useState("")
   const [city, setCity] = useState("")
-  const [country, setCountry] = useState("Россия")
+  const [country, setCountry] = useState(t("defaultCountry"))
   const [postal, setPostal] = useState("")
 
   function applyAddress(addr: Address) {
@@ -77,12 +78,12 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
   if (items.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
-        <p className="font-serif text-3xl italic text-muted-foreground">Ваша корзина пуста</p>
+        <p className="font-serif text-3xl italic text-muted-foreground">{t("emptyTitle")}</p>
         <Link
           href="/shop"
           className="mt-8 border border-foreground px-8 py-4 text-xs tracking-[0.25em] uppercase transition-colors hover:bg-foreground hover:text-background"
         >
-          Перейти в каталог
+          {t("emptyCta")}
         </Link>
       </div>
     )
@@ -95,33 +96,33 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
       <div className="space-y-8">
         {!userPrefill && (
           <div className="border border-border/60 bg-secondary/30 px-5 py-4 text-sm">
-            Уже есть аккаунт?{" "}
+            {t("haveAccount")}{" "}
             <Link
-              href="/account/login?next=/checkout"
+              href={{ pathname: "/account/login", query: { next: "/checkout" } }}
               className="text-foreground underline-offset-4 hover:underline"
             >
-              Войти
+              {t("loginLink")}
             </Link>{" "}
-            — данные заполнятся автоматически.
+            {t("autoFill")}
           </div>
         )}
 
         <fieldset className="space-y-5">
-          <legend className="mb-4 text-xs tracking-[0.25em] text-muted-foreground uppercase">Контакты</legend>
-          <Field label="Имя и фамилия" name="name" required defaultValue={userPrefill?.name} />
+          <legend className="mb-4 text-xs tracking-[0.25em] text-muted-foreground uppercase">{t("sectionContacts")}</legend>
+          <Field label={t("fieldName")} name="name" required defaultValue={userPrefill?.name} />
           <div className="grid gap-5 sm:grid-cols-2">
-            <Field label="Email" name="email" type="email" required defaultValue={userPrefill?.email} />
-            <Field label="Телефон" name="phone" type="tel" required placeholder="+7 ..." defaultValue={userPrefill?.phone} />
+            <Field label={t("fieldEmail")} name="email" type="email" required defaultValue={userPrefill?.email} />
+            <Field label={t("fieldPhone")} name="phone" type="tel" required placeholder={t("phonePlaceholder")} defaultValue={userPrefill?.phone} />
           </div>
         </fieldset>
 
         <fieldset className="space-y-5">
-          <legend className="mb-4 text-xs tracking-[0.25em] text-muted-foreground uppercase">Адрес доставки</legend>
+          <legend className="mb-4 text-xs tracking-[0.25em] text-muted-foreground uppercase">{t("sectionShipping")}</legend>
 
           {savedAddresses.length > 0 && (
             <div>
               <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">
-                Сохранённые адреса
+                {t("savedAddresses")}
               </span>
               <select
                 onChange={(e) => {
@@ -131,10 +132,10 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
                 defaultValue=""
                 className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
               >
-                <option value="" disabled>Выбрать адрес…</option>
+                <option value="" disabled>{t("selectAddress")}</option>
                 {savedAddresses.map((a) => (
                   <option key={a.id} value={a.id}>
-                    {a.street}, {a.city}{a.is_default ? " (по умолчанию)" : ""}
+                    {a.street}, {a.city}{a.is_default ? t("defaultAddress") : ""}
                   </option>
                 ))}
               </select>
@@ -143,7 +144,7 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
 
           <label className="block">
             <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">
-              Адрес (улица, дом, квартира) *
+              {t("fieldAddress")} *
             </span>
             <input
               type="text"
@@ -156,7 +157,7 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
           </label>
           <div className="grid gap-5 sm:grid-cols-2">
             <label className="block">
-              <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Город *</span>
+              <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("fieldCity")} *</span>
               <input
                 type="text"
                 name="city"
@@ -167,7 +168,7 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
               />
             </label>
             <label className="block">
-              <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Индекс</span>
+              <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("fieldPostal")}</span>
               <input
                 type="text"
                 name="postal"
@@ -178,7 +179,7 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
             </label>
           </div>
           <label className="block">
-            <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Страна *</span>
+            <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("fieldCountry")} *</span>
             <input
               type="text"
               name="country"
@@ -191,12 +192,12 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
         </fieldset>
 
         <fieldset>
-          <legend className="mb-4 text-xs tracking-[0.25em] text-muted-foreground uppercase">Комментарий</legend>
+          <legend className="mb-4 text-xs tracking-[0.25em] text-muted-foreground uppercase">{t("sectionNotes")}</legend>
           <label className="block">
             <textarea
               name="notes"
               rows={4}
-              placeholder="Пожелания по упаковке, гравировке..."
+              placeholder={t("notesPlaceholder")}
               className="w-full border border-border bg-background px-4 py-3 text-sm transition-colors focus:border-foreground focus:outline-none"
             />
           </label>
@@ -210,7 +211,7 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
       </div>
 
       <aside className="h-fit border border-border bg-secondary/30 p-6 lg:sticky lg:top-24">
-        <h2 className="mb-5 text-xs tracking-[0.25em] text-muted-foreground uppercase">Ваш заказ</h2>
+        <h2 className="mb-5 text-xs tracking-[0.25em] text-muted-foreground uppercase">{t("summaryTitle")}</h2>
         <ul className="divide-y divide-border/60">
           {items.map((item) => (
             <li key={item.product_id} className="flex gap-4 py-4">
@@ -232,15 +233,15 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
 
         <dl className="mt-6 space-y-2 border-t border-border/60 pt-6 text-sm">
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Подытог</dt>
+            <dt className="text-muted-foreground">{t("subtotal")}</dt>
             <dd className="tabular-nums">{formatPrice(subtotal)}</dd>
           </div>
           <div className="flex justify-between">
-            <dt className="text-muted-foreground">Доставка</dt>
+            <dt className="text-muted-foreground">{t("shipping")}</dt>
             <dd className="tabular-nums">{formatPrice(SHIPPING_COST)}</dd>
           </div>
           <div className="mt-3 flex items-baseline justify-between border-t border-border/60 pt-4">
-            <dt className="text-xs tracking-[0.2em] uppercase">Итого</dt>
+            <dt className="text-xs tracking-[0.2em] uppercase">{t("total")}</dt>
             <dd className="font-serif text-2xl tabular-nums">{formatPrice(total)}</dd>
           </div>
         </dl>
@@ -250,11 +251,11 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
           disabled={loading}
           className="mt-6 flex w-full items-center justify-center gap-2 bg-foreground py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60"
         >
-          {loading ? "Отправляем..." : "Подтвердить заказ"}
+          {loading ? t("submitting") : t("submit")}
         </button>
 
         <p className="mt-4 text-center text-[11px] leading-relaxed text-muted-foreground">
-          После оформления заказа мы свяжемся с вами для подтверждения деталей и способа оплаты.
+          {t("afterOrder")}
         </p>
       </aside>
     </form>

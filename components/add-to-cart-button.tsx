@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Minus, Plus } from "lucide-react"
+import { useTranslations } from "next-intl"
 import { useCart } from "./cart/cart-provider"
 import type { CartItem } from "@/lib/types"
 
@@ -12,6 +13,7 @@ export function AddToCartButton({
   product: Omit<CartItem, "quantity">
   disabled?: boolean
 }) {
+  const t = useTranslations("AddToCart")
   const { addItem } = useCart()
   const [qty, setQty] = useState(1)
 
@@ -21,7 +23,7 @@ export function AddToCartButton({
         <button
           type="button"
           onClick={() => setQty((q) => Math.max(1, q - 1))}
-          aria-label="Уменьшить количество"
+          aria-label={t("decrease")}
           className="flex h-12 w-12 items-center justify-center transition-colors hover:bg-muted"
         >
           <Minus className="h-4 w-4" />
@@ -30,7 +32,7 @@ export function AddToCartButton({
         <button
           type="button"
           onClick={() => setQty((q) => q + 1)}
-          aria-label="Увеличить количество"
+          aria-label={t("increase")}
           className="flex h-12 w-12 items-center justify-center transition-colors hover:bg-muted"
         >
           <Plus className="h-4 w-4" />
@@ -43,7 +45,7 @@ export function AddToCartButton({
         disabled={disabled}
         className="flex-1 bg-foreground px-8 py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
       >
-        {disabled ? "Нет в наличии" : "Добавить в корзину"}
+        {disabled ? t("outOfStock") : t("addToCart")}
       </button>
     </div>
   )

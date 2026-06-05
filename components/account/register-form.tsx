@@ -1,9 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import { useLocale, useTranslations } from "next-intl"
 import { createClient } from "@/lib/supabase/client"
 
 export function RegisterForm({ prefillEmail }: { prefillEmail?: string }) {
+  const t = useTranslations("Auth")
+  const locale = useLocale()
   const [name, setName] = useState("")
   const [email, setEmail] = useState(prefillEmail ?? "")
   const [password, setPassword] = useState("")
@@ -17,7 +20,7 @@ export function RegisterForm({ prefillEmail }: { prefillEmail?: string }) {
     setError(null)
 
     const supabase = createClient()
-    const redirectTo = `${window.location.origin}/auth/callback`
+    const redirectTo = `${window.location.origin}/${locale}/auth/callback`
 
     const { error: signUpError } = await supabase.auth.signUp({
       email,
@@ -41,9 +44,9 @@ export function RegisterForm({ prefillEmail }: { prefillEmail?: string }) {
   if (success) {
     return (
       <div className="border border-border bg-secondary/30 p-6 text-center">
-        <p className="font-serif text-2xl">Проверьте почту</p>
+        <p className="font-serif text-2xl">{t("checkEmailTitle")}</p>
         <p className="mt-3 text-sm text-muted-foreground">
-          Мы отправили письмо на <strong>{email}</strong>. Перейдите по ссылке, чтобы подтвердить аккаунт.
+          {t("checkEmailBody", { email })}
         </p>
       </div>
     )
@@ -52,7 +55,7 @@ export function RegisterForm({ prefillEmail }: { prefillEmail?: string }) {
   return (
     <form onSubmit={onSubmit} className="space-y-5">
       <label className="block">
-        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Имя</span>
+        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("nameLabel")}</span>
         <input
           type="text"
           value={name}
@@ -62,7 +65,7 @@ export function RegisterForm({ prefillEmail }: { prefillEmail?: string }) {
         />
       </label>
       <label className="block">
-        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Email</span>
+        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("emailLabel")}</span>
         <input
           type="email"
           value={email}
@@ -72,7 +75,7 @@ export function RegisterForm({ prefillEmail }: { prefillEmail?: string }) {
         />
       </label>
       <label className="block">
-        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Пароль</span>
+        <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">{t("passwordLabel")}</span>
         <input
           type="password"
           value={password}
@@ -92,7 +95,7 @@ export function RegisterForm({ prefillEmail }: { prefillEmail?: string }) {
         disabled={loading}
         className="w-full bg-foreground py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60"
       >
-        {loading ? "Создаём..." : "Создать аккаунт"}
+        {loading ? t("creating") : t("createAccount")}
       </button>
     </form>
   )

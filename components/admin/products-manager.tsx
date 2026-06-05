@@ -1,10 +1,11 @@
 "use client"
 
 import Image from "next/image"
-import { useState, useTransition } from "react"
+import { useRef, useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
-import { Pencil, Trash2, Plus, X } from "lucide-react"
+import { Pencil, Trash2, Plus, X, Upload } from "lucide-react"
 import { deleteProduct, upsertProduct, type ProductInput } from "@/app/actions/admin"
+import { uploadProductImage } from "@/app/actions/images"
 import { formatPrice } from "@/lib/format"
 import { CATEGORY_LABELS, type Product, type ProductCategory } from "@/lib/types"
 
@@ -111,6 +112,23 @@ function ProductEditor({
 }) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [imageUrl, setImageUrl] = useState(product?.image_url ?? "")
+  const [imgUploading, setImgUploading] = useState(false)
+  const imgInputRef = useRef<HTMLInputElement>(null)
+
+  async function onImageFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setImgUploading(true)
+    setError(null)
+    const fd = new FormData()
+    fd.append("file", file)
+    const res = await uploadProductImage(fd)
+    if (res.ok) setImageUrl(res.url)
+    else setError(res.error)
+    setImgUploading(false)
+    if (imgInputRef.current) imgInputRef.current.value = ""
+  }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -170,7 +188,34 @@ function ProductEditor({
             <Input label="Цена (USD)" name="price" type="number" step="0.01" defaultValue={product?.price?.toString()} required />
             <Input label="Остаток" name="stock" type="number" defaultValue={product?.stock?.toString() ?? "0"} required />
           </div>
-          <Input label="URL изображения" name="image_url" defaultValue={product?.image_url ?? ""} placeholder="/product-ring.jpg" />
+          <div className="block">
+            <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Фото товара</span>
+            <div className="flex items-start gap-4">
+              <div className="relative aspect-[4/5] w-24 shrink-0 overflow-hidden bg-muted">
+                {imageUrl && <Image src={imageUrl} alt="" fill sizes="96px" className="object-cover" />}
+              </div>
+              <div className="flex-1 space-y-2">
+                <input ref={imgInputRef} type="file" accept="image/*" onChange={onImageFile} className="hidden" />
+                <button
+                  type="button"
+                  onClick={() => imgInputRef.current?.click()}
+                  disabled={imgUploading}
+                  className="inline-flex items-center gap-2 border border-border px-4 py-2.5 text-[10px] tracking-[0.2em] uppercase transition-colors hover:border-foreground disabled:opacity-60"
+                >
+                  <Upload className="h-3.5 w-3.5" />
+                  {imgUploading ? "Загружаем..." : "Загрузить фото"}
+                </button>
+                <input
+                  type="text"
+                  name="image_url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="или вставьте URL"
+                  className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+                />
+              </div>
+            </div>
+          </div>
           <Input label="Материал" name="material" defaultValue={product?.material ?? "925 Sterling Silver"} />
           <label className="block">
             <span className="mb-2 block text-[11px] tracking-[0.2em] text-muted-foreground uppercase">Описание</span>

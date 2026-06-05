@@ -1,10 +1,8 @@
+import { useTranslations } from "next-intl"
+
 export function AnnouncementBar() {
-  const items = [
-    "Бесплатная доставка по России от 5 000 ₽",
-    "Ручная работа · Серебро 925",
-    "Новая коллекция «Луна» уже в продаже",
-    "Подарочная упаковка в каждом заказе",
-  ]
+  const t = useTranslations("AnnouncementBar")
+  const items = [t("item1"), t("item2"), t("item3"), t("item4")]
 
   return (
     <div className="overflow-hidden border-b border-border/60 bg-foreground text-background">

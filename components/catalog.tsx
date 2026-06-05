@@ -1,11 +1,13 @@
-import Link from "next/link"
 import { ArrowUpRight } from "lucide-react"
-import { createClient } from "@/lib/supabase/server"
+import { getTranslations } from "next-intl/server"
+import { createPublicClient } from "@/lib/supabase/public"
+import { Link } from "@/i18n/navigation"
 import { ProductCard } from "./product-card"
 import type { Product } from "@/lib/types"
 
 export async function Catalog() {
-  const supabase = await createClient()
+  const t = await getTranslations("Catalog")
+  const supabase = createPublicClient()
   const { data } = await supabase
     .from("products")
     .select("*")
@@ -22,12 +24,12 @@ export async function Catalog() {
           <div>
             <p className="mb-5 flex items-center gap-3 text-xs tracking-[0.3em] text-muted-foreground uppercase">
               <span className="h-px w-8 bg-muted-foreground/60" aria-hidden="true" />
-              Каталог
+              {t("kicker")}
             </p>
             <h2 className="font-serif text-4xl leading-tight text-balance text-foreground md:text-6xl">
-              Избранные
+              {t("title1")}
               <br />
-              <em className="font-light italic text-muted-foreground">работы</em>
+              <em className="font-light italic text-muted-foreground">{t("titleItalic")}</em>
             </h2>
           </div>
 
@@ -35,7 +37,7 @@ export async function Catalog() {
             href="/shop"
             className="group inline-flex items-center gap-3 self-start border border-foreground px-6 py-3 text-xs tracking-[0.25em] uppercase transition-colors hover:bg-foreground hover:text-background"
           >
-            Весь каталог
+            {t("allCatalog")}
             <ArrowUpRight
               className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
               aria-hidden="true"
@@ -50,7 +52,7 @@ export async function Catalog() {
             ))}
           </div>
         ) : (
-          <p className="py-20 text-center text-muted-foreground">Товары скоро появятся.</p>
+          <p className="py-20 text-center text-muted-foreground">{t("empty")}</p>
         )}
       </div>
     </section>

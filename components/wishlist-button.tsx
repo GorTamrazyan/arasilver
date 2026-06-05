@@ -1,8 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { Heart } from "lucide-react"
+import { useTranslations } from "next-intl"
+import { useRouter } from "@/i18n/navigation"
 import { createClient } from "@/lib/supabase/client"
 import { toggleWishlist } from "@/app/actions/wishlist"
 
@@ -13,6 +14,7 @@ type Props = {
 }
 
 export function WishlistButton({ productId, initialInWishlist, className = "" }: Props) {
+  const t = useTranslations("Wishlist")
   const [inWishlist, setInWishlist] = useState(initialInWishlist ?? false)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
@@ -61,7 +63,7 @@ export function WishlistButton({ productId, initialInWishlist, className = "" }:
   return (
     <button
       type="button"
-      aria-label={inWishlist ? "Убрать из избранного" : "Добавить в избранное"}
+      aria-label={inWishlist ? t("remove") : t("add")}
       onClick={handleClick}
       disabled={loading}
       className={`flex items-center justify-center transition-opacity disabled:opacity-60 ${className}`}
