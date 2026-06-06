@@ -23,7 +23,11 @@ export function WishlistButton({ productId, initialInWishlist, className = "" }:
   useEffect(() => {
     if (initialInWishlist !== undefined) return
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    // getSession() reads the session from local storage; getUser() would hold
+    // the auth Web Lock across a network round-trip, and with many buttons on a
+    // product grid mounting at once that causes lock-contention errors.
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      const user = session?.user
       if (!user) return
       supabase
         .from("wishlists")
@@ -41,7 +45,8 @@ export function WishlistButton({ productId, initialInWishlist, className = "" }:
     if (loading) return
 
     const supabase = createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const { data: { session } } = await supabase.auth.getSession()
+    const user = session?.user
 
     if (!user) {
       router.push(`/account/login?next=${encodeURIComponent(window.location.pathname)}`)

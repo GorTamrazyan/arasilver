@@ -1,8 +1,5 @@
-import { useTranslations } from "next-intl"
-
-export function AnnouncementBar() {
-  const t = useTranslations("AnnouncementBar")
-  const items = [t("item1"), t("item2"), t("item3"), t("item4")]
+export function AnnouncementBar({ items }: { items: string[] }) {
+  if (items.length === 0) return null
 
   return (
     <div className="overflow-hidden border-b border-border/60 bg-foreground text-background">

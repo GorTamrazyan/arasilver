@@ -1,8 +1,15 @@
 import type { ReactNode } from "react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 import { AdminSignOut } from "./admin-sign-out"
 
 export function AdminShell({ children, active }: { children: ReactNode; active?: "orders" | "products" | "media" }) {
+  const t = useTranslations("Admin")
+  const linkClass = (key: "orders" | "products" | "media") =>
+    active === key
+      ? "bg-secondary px-3 py-1.5 text-foreground"
+      : "px-3 py-1.5 text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="border-b border-border bg-background">
@@ -12,23 +19,14 @@ export function AdminShell({ children, active }: { children: ReactNode; active?:
               ARASILVER
             </Link>
             <nav className="flex items-center gap-6 text-xs tracking-[0.2em] uppercase">
-              <Link
-                href="/admin"
-                className={active === "orders" ? "text-foreground" : "text-muted-foreground hover:text-foreground"}
-              >
-                Заказы
+              <Link href="/admin" className={linkClass("orders")}>
+                {t("nav.orders")}
               </Link>
-              <Link
-                href="/admin/products"
-                className={active === "products" ? "text-foreground" : "text-muted-foreground hover:text-foreground"}
-              >
-                Товары
+              <Link href="/admin/products" className={linkClass("products")}>
+                {t("nav.products")}
               </Link>
-              <Link
-                href="/admin/media"
-                className={active === "media" ? "text-foreground" : "text-muted-foreground hover:text-foreground"}
-              >
-                Медиа
+              <Link href="/admin/media" className={linkClass("media")}>
+                {t("nav.media")}
               </Link>
             </nav>
           </div>

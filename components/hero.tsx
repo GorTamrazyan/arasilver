@@ -3,7 +3,18 @@ import { ArrowUpRight } from "lucide-react"
 import { useTranslations } from "next-intl"
 import { Link } from "@/i18n/navigation"
 
-export function Hero({ imageUrl }: { imageUrl: string }) {
+export function Hero({
+  imageUrl,
+  heading,
+}: {
+  imageUrl: string
+  heading: {
+    captionLabel: string
+    captionTitle: string
+    captionSilver: string
+    captionPrice: string
+  }
+}) {
   const t = useTranslations("Hero")
 
   return (
@@ -86,12 +97,12 @@ export function Hero({ imageUrl }: { imageUrl: string }) {
           {/* Overlay caption card */}
           <div className="absolute bottom-6 left-6 max-w-[240px] bg-background/95 p-5 shadow-sm backdrop-blur-sm">
             <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">
-              {t("captionLabel")}
+              {heading.captionLabel}
             </p>
             <p className="mt-2 font-serif text-lg leading-snug text-foreground">
-              {t("captionTitle")} <span className="italic text-muted-foreground">{t("captionSilver")}</span>
+              {heading.captionTitle} <span className="italic text-muted-foreground">{heading.captionSilver}</span>
             </p>
-            <p className="mt-3 text-sm text-foreground/80">{t("captionPrice")}</p>
+            <p className="mt-3 text-sm text-foreground/80">{heading.captionPrice}</p>
           </div>
         </div>
       </div>

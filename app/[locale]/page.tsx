@@ -8,6 +8,8 @@ import { About } from "@/components/about"
 import { InstagramFeed } from "@/components/instagram-feed"
 import { SiteFooter } from "@/components/site-footer"
 import { getSiteImages } from "@/lib/site-images"
+import { getAnnouncementItems } from "@/lib/site-settings"
+import { getSiteTexts } from "@/lib/site-texts"
 
 export const revalidate = 60
 
@@ -19,15 +21,32 @@ export default async function Page({
   const { locale } = await params
   setRequestLocale(locale)
 
-  const images = await getSiteImages()
+  const [images, announcement, texts] = await Promise.all([
+    getSiteImages(),
+    getAnnouncementItems(locale),
+    getSiteTexts(locale),
+  ])
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <AnnouncementBar />
+      <AnnouncementBar items={announcement} />
       <SiteNav />
-      <Hero imageUrl={images.hero} />
+      <Hero
+        imageUrl={images.hero}
+        heading={
+          texts.hero as {
+            captionLabel: string
+            captionTitle: string
+            captionSilver: string
+            captionPrice: string
+          }
+        }
+      />
       <Catalog />
-      <Editorial imageUrl={images.editorial} />
+      <Editorial
+        imageUrl={images.editorial}
+        heading={texts.editorial as { kicker: string; title: string; titleItalic: string; lede: string }}
+      />
       <About imageUrl={images.about} />
       <InstagramFeed
         images={[

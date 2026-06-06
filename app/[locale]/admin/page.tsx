@@ -1,3 +1,4 @@
+import { getTranslations } from "next-intl/server"
 import { createClient } from "@/lib/supabase/server"
 import { AdminShell } from "@/components/admin/admin-shell"
 import { OrdersTable } from "@/components/admin/orders-table"
@@ -7,6 +8,7 @@ import { formatPrice } from "@/lib/format"
 export const dynamic = "force-dynamic"
 
 export default async function AdminOrdersPage() {
+  const t = await getTranslations("Admin.orders")
   const supabase = await createClient()
 
   const { data: ordersData } = await supabase
@@ -37,14 +39,14 @@ export default async function AdminOrdersPage() {
   return (
     <AdminShell active="orders">
       <div className="mb-10">
-        <p className="text-xs tracking-[0.3em] text-muted-foreground uppercase">Заказы</p>
-        <h1 className="mt-3 font-serif text-4xl md:text-5xl">Управление заказами</h1>
+        <p className="text-xs tracking-[0.3em] text-muted-foreground uppercase">{t("eyebrow")}</p>
+        <h1 className="mt-3 font-serif text-4xl md:text-5xl">{t("title")}</h1>
       </div>
 
       <div className="mb-10 grid gap-5 sm:grid-cols-3">
-        <Stat label="Всего заказов" value={orders.length.toString()} />
-        <Stat label="Ожидают обработки" value={pendingCount.toString()} />
-        <Stat label="Выручка" value={formatPrice(totalRevenue)} />
+        <Stat label={t("statTotal")} value={orders.length.toString()} />
+        <Stat label={t("statPending")} value={pendingCount.toString()} />
+        <Stat label={t("statRevenue")} value={formatPrice(totalRevenue)} />
       </div>
 
       <OrdersTable orders={orders} itemsByOrder={Object.fromEntries(itemsByOrder)} />

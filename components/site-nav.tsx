@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { useTranslations } from "next-intl"
 import { Menu, X, User, ChevronDown } from "lucide-react"
-import { Link, useRouter } from "@/i18n/navigation"
+import { Link, useRouter, usePathname } from "@/i18n/navigation"
 import { CartButton } from "./cart/cart-button"
 import { LanguageSwitcher } from "./language-switcher"
 import { createClient } from "@/lib/supabase/client"
@@ -27,8 +27,11 @@ const CATALOG_CATEGORIES = [
 function CatalogMenu() {
   const t = useTranslations("Nav")
   const tCategories = useTranslations("Categories")
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   let closeTimer: ReturnType<typeof setTimeout> | undefined
+
+  const isActive = pathname.startsWith("/shop")
 
   function handleEnter() {
     if (closeTimer) clearTimeout(closeTimer)
@@ -44,7 +47,10 @@ function CatalogMenu() {
     <div className="relative" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
       <Link
         href="/shop"
-        className="inline-flex items-center gap-1 transition-colors hover:text-foreground"
+        aria-current={isActive ? "page" : undefined}
+        className={`inline-flex items-center gap-1 px-3 py-1.5 transition-colors hover:text-foreground ${
+          isActive ? "bg-secondary text-foreground" : "hover:bg-secondary/60"
+        }`}
       >
         {t("catalog")}
         <ChevronDown className="h-3 w-3 opacity-60" aria-hidden="true" />
@@ -82,7 +88,10 @@ function UserNavSection() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => setUser(data.user))
+    // onAuthStateChange emits an INITIAL_SESSION event on subscribe, so this
+    // covers both the initial state and later changes. Avoid auth.getUser()
+    // here: it holds the auth Web Lock across a network round-trip and, with
+    // many client components mounting at once, causes lock-contention errors.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null)
     })
@@ -156,9 +165,12 @@ function UserNavSection() {
 
 export function SiteNav() {
   const t = useTranslations("Nav")
+  const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const [mobileUser, setMobileUser] = useState<SupabaseUser | null | undefined>(undefined)
   const router = useRouter()
+
+  const isHome = pathname === "/"
 
   const navLinks = [
     { label: t("catalog"), href: "/shop" as const },
@@ -167,7 +179,8 @@ export function SiteNav() {
 
   useEffect(() => {
     const supabase = createClient()
-    supabase.auth.getUser().then(({ data }) => setMobileUser(data.user))
+    // See UserNavSection above: rely on onAuthStateChange's INITIAL_SESSION
+    // event instead of auth.getUser() to avoid auth-lock contention.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
       setMobileUser(session?.user ?? null)
     })
@@ -183,11 +196,18 @@ export function SiteNav() {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
+    <>
+      <header className="sticky top-0 z-40 border-b border-border/60 bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-[1400px] items-center justify-between px-5 md:px-10">
         <nav className="hidden items-center gap-8 text-sm tracking-wide text-foreground/80 md:flex">
           <CatalogMenu />
-          <Link href="/#about" className="transition-colors hover:text-foreground">
+          <Link
+            href="/#about"
+            aria-current={isHome ? "page" : undefined}
+            className={`px-3 py-1.5 transition-colors hover:text-foreground ${
+              isHome ? "bg-secondary text-foreground" : "hover:bg-secondary/60"
+            }`}
+          >
             {t("about")}
           </Link>
         </nav>
@@ -218,20 +238,28 @@ export function SiteNav() {
           <CartButton />
         </div>
       </div>
+      </header>
 
       {open && (
-        <div className="fixed inset-0 z-50 bg-background md:hidden">
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* Dimmed backdrop — tap to close, page stays partly visible behind. */}
+          <div
+            className="absolute inset-0 bg-foreground/40 backdrop-blur-sm"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+          {/* Sliding side panel — does not cover the whole screen. */}
+          <div className="absolute inset-y-0 left-0 flex w-[82%] max-w-[340px] flex-col bg-background shadow-2xl">
           <div className="flex h-16 items-center justify-between border-b border-border/60 px-5">
             <span className="font-serif text-xl tracking-[0.3em]">ARASILVER</span>
             <button type="button" aria-label={t("closeMenu")} onClick={() => setOpen(false)}>
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
           </div>
-          <nav className="flex flex-col gap-1 px-5 py-8">
+          <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-5 py-8">
             {navLinks.map((l, i) => (
               <Link
                 key={i}
-                // @ts-expect-error -- mixed string/object hrefs for the locale-aware Link
                 href={l.href}
                 onClick={() => setOpen(false)}
                 className="border-b border-border/50 py-4 font-serif text-2xl text-foreground"
@@ -271,8 +299,9 @@ export function SiteNav() {
               <LanguageSwitcher className="text-base" />
             </div>
           </nav>
+          </div>
         </div>
       )}
-    </header>
+    </>
   )
 }

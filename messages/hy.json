@@ -251,5 +251,98 @@
     "hy": "Հայերեն",
     "ru": "Русский",
     "en": "English"
+  },
+  "Admin": {
+    "nav": {
+      "orders": "Պատվերներ",
+      "products": "Ապրանքներ",
+      "media": "Մեդիա"
+    },
+    "signOut": "Դուրս գալ",
+    "orders": {
+      "eyebrow": "Պատվերներ",
+      "title": "Պատվերների կառավարում",
+      "statTotal": "Ընդամենը պատվերներ",
+      "statPending": "Սպասում են մշակման",
+      "statRevenue": "Հասույթ",
+      "empty": "Դեռ պատվերներ չկան",
+      "colNumber": "Համար",
+      "colCustomer": "Հաճախորդ",
+      "colDate": "Ամսաթիվ",
+      "colTotal": "Գումար",
+      "colStatus": "Կարգավիճակ",
+      "sectionCustomer": "Հաճախորդ",
+      "sectionShipping": "Առաքում",
+      "name": "Անուն",
+      "email": "Email",
+      "phone": "Հեռախոս",
+      "address": "Հասցե",
+      "city": "Քաղաք",
+      "country": "Երկիր",
+      "comment": "Մեկնաբանություն",
+      "sectionItems": "Ապրանքներ",
+      "subtotal": "Ենթագումար",
+      "shippingCost": "Առաքում",
+      "total": "Ընդամենը",
+      "statusLabel": "Կարգավիճակ"
+    },
+    "status": {
+      "pending": "Նոր",
+      "confirmed": "Հաստատված",
+      "shipped": "Ուղարկված",
+      "delivered": "Առաքված",
+      "cancelled": "Չեղարկված"
+    },
+    "products": {
+      "eyebrow": "Ապրանքներ",
+      "title": "Կատալոգ",
+      "newProduct": "Նոր ապրանք",
+      "empty": "Ապրանքներ չկան",
+      "emptyHint": "Ավելացրեք առաջին զարդը կատալոգում:",
+      "edit": "Խմբագրել",
+      "editTitle": "Խմբագրել ապրանքը",
+      "createTitle": "Նոր ապրանք",
+      "fieldName": "Անվանում",
+      "fieldSlug": "Slug (URL)",
+      "fieldCategory": "Կատեգորիա",
+      "fieldPrice": "Գին (USD)",
+      "fieldStock": "Մնացորդ",
+      "fieldPhoto": "Ապրանքի լուսանկար",
+      "uploadPhoto": "Վերբեռնել լուսանկար",
+      "uploading": "Բեռնում...",
+      "urlPlaceholder": "կամ տեղադրեք URL",
+      "fieldMaterial": "Նյութ",
+      "fieldDescription": "Նկարագրություն",
+      "showInCatalog": "Ցուցադրել կատալոգում",
+      "cancel": "Չեղարկել",
+      "save": "Պահպանել",
+      "saving": "Պահպանում...",
+      "stock": "Մնացորդ",
+      "hidden": "Թաքնված",
+      "deleteConfirm": "Ջնջե՞լ ապրանքը: Այս գործողությունը հնարավոր չէ հետարկել:"
+    },
+    "media": {
+      "eyebrow": "Մեդիա",
+      "title": "Կայքի լուսանկարներ",
+      "description": "Փոխարինեք գլխավոր էջի բաններները: Փոփոխությունները հայտնվում են կայքում մեկ րոպեի ընթացքում:",
+      "replacePhoto": "Փոխարինել լուսանկարը",
+      "uploading": "Բեռնում...",
+      "imageLabels": {
+        "hero": "Գլխավոր բաններ (Hero)",
+        "editorial": "Լուքբուք (Editorial)",
+        "about": "Բրենդի մասին — արհեստանոց",
+        "instagram": "Instagram · լուսանկար {n}"
+      }
+    },
+    "announcement": {
+      "title": "Վազող տող",
+      "hint": "Յուրաքանչյուր դաշտը առանձին հաղորդագրություն է վազող տողում: Լրացրեք յուրաքանչյուր լեզվի համար:",
+      "messagePlaceholder": "Հաղորդագրության տեքստ",
+      "addMessage": "Ավելացնել հաղորդագրություն",
+      "removeMessage": "Ջնջել հաղորդագրությունը",
+      "save": "Պահպանել",
+      "saving": "Պահպանում...",
+      "saved": "Պահպանված է"
+    }
   }
 }

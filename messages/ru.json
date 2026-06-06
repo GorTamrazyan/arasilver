@@ -251,5 +251,98 @@
     "hy": "Հայերեն",
     "ru": "Русский",
     "en": "English"
+  },
+  "Admin": {
+    "nav": {
+      "orders": "Заказы",
+      "products": "Товары",
+      "media": "Медиа"
+    },
+    "signOut": "Выйти",
+    "orders": {
+      "eyebrow": "Заказы",
+      "title": "Управление заказами",
+      "statTotal": "Всего заказов",
+      "statPending": "Ожидают обработки",
+      "statRevenue": "Выручка",
+      "empty": "Заказов пока нет",
+      "colNumber": "Номер",
+      "colCustomer": "Клиент",
+      "colDate": "Дата",
+      "colTotal": "Сумма",
+      "colStatus": "Статус",
+      "sectionCustomer": "Клиент",
+      "sectionShipping": "Доставка",
+      "name": "Имя",
+      "email": "Email",
+      "phone": "Телефон",
+      "address": "Адрес",
+      "city": "Город",
+      "country": "Страна",
+      "comment": "Комментарий",
+      "sectionItems": "Товары",
+      "subtotal": "Подытог",
+      "shippingCost": "Доставка",
+      "total": "Итого",
+      "statusLabel": "Статус"
+    },
+    "status": {
+      "pending": "Новый",
+      "confirmed": "Подтверждён",
+      "shipped": "Отправлен",
+      "delivered": "Доставлен",
+      "cancelled": "Отменён"
+    },
+    "products": {
+      "eyebrow": "Товары",
+      "title": "Каталог",
+      "newProduct": "Новый товар",
+      "empty": "Нет товаров",
+      "emptyHint": "Добавьте первое украшение в каталог.",
+      "edit": "Править",
+      "editTitle": "Редактировать товар",
+      "createTitle": "Новый товар",
+      "fieldName": "Название",
+      "fieldSlug": "Slug (URL)",
+      "fieldCategory": "Категория",
+      "fieldPrice": "Цена (USD)",
+      "fieldStock": "Остаток",
+      "fieldPhoto": "Фото товара",
+      "uploadPhoto": "Загрузить фото",
+      "uploading": "Загружаем...",
+      "urlPlaceholder": "или вставьте URL",
+      "fieldMaterial": "Материал",
+      "fieldDescription": "Описание",
+      "showInCatalog": "Показывать в каталоге",
+      "cancel": "Отмена",
+      "save": "Сохранить",
+      "saving": "Сохраняем...",
+      "stock": "Остаток",
+      "hidden": "Скрыт",
+      "deleteConfirm": "Удалить товар? Это действие нельзя отменить."
+    },
+    "media": {
+      "eyebrow": "Медиа",
+      "title": "Фото на сайте",
+      "description": "Замените баннеры главной страницы. Изменения появляются на сайте в течение минуты.",
+      "replacePhoto": "Заменить фото",
+      "uploading": "Загружаем...",
+      "imageLabels": {
+        "hero": "Главный баннер (Hero)",
+        "editorial": "Лукбук (Editorial)",
+        "about": "О бренде — мастерская",
+        "instagram": "Instagram · фото {n}"
+      }
+    },
+    "announcement": {
+      "title": "Бегущая строка",
+      "hint": "Каждое поле — отдельное сообщение в бегущей строке. Заполните для каждого языка.",
+      "messagePlaceholder": "Текст сообщения",
+      "addMessage": "Добавить сообщение",
+      "removeMessage": "Удалить сообщение",
+      "save": "Сохранить",
+      "saving": "Сохраняем...",
+      "saved": "Сохранено"
+    }
   }
 }

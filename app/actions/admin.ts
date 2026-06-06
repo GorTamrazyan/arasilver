@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache"
 import { createClient } from "@/lib/supabase/server"
 import type { OrderStatus, ProductCategory } from "@/lib/types"
+import { ANNOUNCEMENT_LOCALES, announcementKey } from "@/lib/site-settings"
+import { SITE_TEXT_LOCALES, SITE_TEXT_FIELDS, siteTextKey } from "@/lib/site-texts"
 
 async function requireAdmin() {
   const supabase = await createClient()
@@ -75,6 +77,48 @@ export async function upsertProduct(input: ProductInput) {
   revalidatePath("/admin/products")
   revalidatePath("/shop")
   revalidatePath("/")
+  return { ok: true as const }
+}
+
+/** Saves the announcement bar text for every locale (value = one item per line). */
+export async function saveAnnouncement(byLocale: Record<string, string>) {
+  const supabase = await requireAdmin()
+  const rows = ANNOUNCEMENT_LOCALES.map((locale) => ({
+    key: announcementKey(locale),
+    value: byLocale[locale] ?? "",
+    updated_at: new Date().toISOString(),
+  }))
+  const { error } = await supabase.from("site_settings").upsert(rows)
+  if (error) return { ok: false as const, error: error.message }
+  revalidatePath("/")
+  revalidatePath("/admin/media")
+  return { ok: true as const }
+}
+
+/**
+ * Saves editable home-page headlines. Accepts a flat map of
+ * `text_<section>_<field>_<locale>` → value; unknown keys are ignored.
+ */
+export async function saveSiteTexts(values: Record<string, string>) {
+  const supabase = await requireAdmin()
+
+  const allowed = new Set<string>()
+  for (const locale of SITE_TEXT_LOCALES) {
+    for (const [section, fields] of Object.entries(SITE_TEXT_FIELDS)) {
+      for (const field of fields) allowed.add(siteTextKey(section, field, locale))
+    }
+  }
+
+  const rows = Object.entries(values)
+    .filter(([key]) => allowed.has(key))
+    .map(([key, value]) => ({ key, value: value ?? "", updated_at: new Date().toISOString() }))
+
+  if (rows.length === 0) return { ok: true as const }
+
+  const { error } = await supabase.from("site_settings").upsert(rows)
+  if (error) return { ok: false as const, error: error.message }
+  revalidatePath("/")
+  revalidatePath("/admin/media")
   return { ok: true as const }
 }
 

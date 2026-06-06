@@ -3,9 +3,10 @@
 import { useState, useTransition } from "react"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useTranslations } from "next-intl"
 import { updateOrderStatus } from "@/app/actions/admin"
 import { formatPrice, formatDate } from "@/lib/format"
-import { STATUS_LABELS, type Order, type OrderItem, type OrderStatus } from "@/lib/types"
+import { type Order, type OrderItem, type OrderStatus } from "@/lib/types"
 
 const STATUS_OPTIONS: OrderStatus[] = ["pending", "confirmed", "shipped", "delivered", "cancelled"]
 
@@ -26,6 +27,8 @@ export function OrdersTable({
 }) {
   const [expanded, setExpanded] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
+  const t = useTranslations("Admin.orders")
+  const tStatus = useTranslations("Admin.status")
   const router = useRouter()
 
   function toggle(id: string) {
@@ -42,7 +45,7 @@ export function OrdersTable({
   if (orders.length === 0) {
     return (
       <div className="border border-border bg-secondary/20 p-16 text-center">
-        <p className="font-serif text-2xl italic text-muted-foreground">Заказов пока нет</p>
+        <p className="font-serif text-2xl italic text-muted-foreground">{t("empty")}</p>
       </div>
     )
   }
@@ -50,11 +53,11 @@ export function OrdersTable({
   return (
     <div className="border border-border">
       <div className="hidden grid-cols-[1fr_1.5fr_1fr_1fr_1fr_40px] gap-4 border-b border-border bg-secondary/40 px-5 py-3 text-[10px] tracking-[0.25em] text-muted-foreground uppercase md:grid">
-        <span>Номер</span>
-        <span>Клиент</span>
-        <span>Дата</span>
-        <span>Сумма</span>
-        <span>Статус</span>
+        <span>{t("colNumber")}</span>
+        <span>{t("colCustomer")}</span>
+        <span>{t("colDate")}</span>
+        <span>{t("colTotal")}</span>
+        <span>{t("colStatus")}</span>
         <span />
       </div>
 
@@ -79,7 +82,7 @@ export function OrdersTable({
                   <span
                     className={`hidden justify-self-start px-3 py-1 text-[10px] tracking-[0.2em] uppercase md:inline-block ${STATUS_STYLES[order.status]}`}
                   >
-                    {STATUS_LABELS[order.status]}
+                    {tStatus(order.status)}
                   </span>
                 </div>
                 {isOpen ? (
@@ -93,29 +96,29 @@ export function OrdersTable({
                 <div className="border-t border-border bg-secondary/20 px-5 py-6">
                   <div className="grid gap-8 md:grid-cols-2">
                     <div>
-                      <h3 className="mb-3 text-[10px] tracking-[0.25em] text-muted-foreground uppercase">Клиент</h3>
+                      <h3 className="mb-3 text-[10px] tracking-[0.25em] text-muted-foreground uppercase">{t("sectionCustomer")}</h3>
                       <dl className="space-y-2 text-sm">
-                        <Row label="Имя" value={order.customer_name} />
-                        <Row label="Email" value={order.customer_email} />
-                        <Row label="Телефон" value={order.customer_phone} />
+                        <Row label={t("name")} value={order.customer_name} />
+                        <Row label={t("email")} value={order.customer_email} />
+                        <Row label={t("phone")} value={order.customer_phone} />
                       </dl>
 
                       <h3 className="mt-6 mb-3 text-[10px] tracking-[0.25em] text-muted-foreground uppercase">
-                        Доставка
+                        {t("sectionShipping")}
                       </h3>
                       <dl className="space-y-2 text-sm">
-                        <Row label="Адрес" value={order.shipping_address} />
+                        <Row label={t("address")} value={order.shipping_address} />
                         <Row
-                          label="Город"
+                          label={t("city")}
                           value={`${order.shipping_city}${order.shipping_postal ? `, ${order.shipping_postal}` : ""}`}
                         />
-                        <Row label="Страна" value={order.shipping_country} />
-                        {order.notes && <Row label="Комментарий" value={order.notes} />}
+                        <Row label={t("country")} value={order.shipping_country} />
+                        {order.notes && <Row label={t("comment")} value={order.notes} />}
                       </dl>
                     </div>
 
                     <div>
-                      <h3 className="mb-3 text-[10px] tracking-[0.25em] text-muted-foreground uppercase">Товары</h3>
+                      <h3 className="mb-3 text-[10px] tracking-[0.25em] text-muted-foreground uppercase">{t("sectionItems")}</h3>
                       <ul className="space-y-2 border border-border bg-background p-4">
                         {items.map((it) => (
                           <li key={it.id} className="flex items-start justify-between gap-4 text-sm">
@@ -132,22 +135,22 @@ export function OrdersTable({
 
                       <dl className="mt-4 space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <dt className="text-muted-foreground">Подытог</dt>
+                          <dt className="text-muted-foreground">{t("subtotal")}</dt>
                           <dd className="tabular-nums">{formatPrice(Number(order.subtotal))}</dd>
                         </div>
                         <div className="flex justify-between">
-                          <dt className="text-muted-foreground">Доставка</dt>
+                          <dt className="text-muted-foreground">{t("shippingCost")}</dt>
                           <dd className="tabular-nums">{formatPrice(Number(order.shipping_cost))}</dd>
                         </div>
                         <div className="flex justify-between border-t border-border pt-2 font-serif text-lg">
-                          <dt>Итого</dt>
+                          <dt>{t("total")}</dt>
                           <dd className="tabular-nums">{formatPrice(Number(order.total))}</dd>
                         </div>
                       </dl>
 
                       <div className="mt-6">
                         <label className="mb-2 block text-[10px] tracking-[0.25em] text-muted-foreground uppercase">
-                          Статус
+                          {t("statusLabel")}
                         </label>
                         <select
                           value={order.status}
@@ -157,7 +160,7 @@ export function OrdersTable({
                         >
                           {STATUS_OPTIONS.map((s) => (
                             <option key={s} value={s}>
-                              {STATUS_LABELS[s]}
+                              {tStatus(s)}
                             </option>
                           ))}
                         </select>

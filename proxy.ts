@@ -20,7 +20,7 @@ function isProtected(barePath: string) {
   return PROTECTED_PREFIXES.some((p) => barePath === p || barePath.startsWith(p + "/"))
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   // Let next-intl decide on locale prefix / redirects first.
   const response = intlMiddleware(request)
 

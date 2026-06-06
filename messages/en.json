@@ -251,5 +251,98 @@
     "hy": "Հայերեն",
     "ru": "Русский",
     "en": "English"
+  },
+  "Admin": {
+    "nav": {
+      "orders": "Orders",
+      "products": "Products",
+      "media": "Media"
+    },
+    "signOut": "Sign out",
+    "orders": {
+      "eyebrow": "Orders",
+      "title": "Order management",
+      "statTotal": "Total orders",
+      "statPending": "Awaiting processing",
+      "statRevenue": "Revenue",
+      "empty": "No orders yet",
+      "colNumber": "Number",
+      "colCustomer": "Customer",
+      "colDate": "Date",
+      "colTotal": "Total",
+      "colStatus": "Status",
+      "sectionCustomer": "Customer",
+      "sectionShipping": "Shipping",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "address": "Address",
+      "city": "City",
+      "country": "Country",
+      "comment": "Comment",
+      "sectionItems": "Items",
+      "subtotal": "Subtotal",
+      "shippingCost": "Shipping",
+      "total": "Total",
+      "statusLabel": "Status"
+    },
+    "status": {
+      "pending": "New",
+      "confirmed": "Confirmed",
+      "shipped": "Shipped",
+      "delivered": "Delivered",
+      "cancelled": "Cancelled"
+    },
+    "products": {
+      "eyebrow": "Products",
+      "title": "Catalog",
+      "newProduct": "New product",
+      "empty": "No products",
+      "emptyHint": "Add your first piece to the catalog.",
+      "edit": "Edit",
+      "editTitle": "Edit product",
+      "createTitle": "New product",
+      "fieldName": "Name",
+      "fieldSlug": "Slug (URL)",
+      "fieldCategory": "Category",
+      "fieldPrice": "Price (USD)",
+      "fieldStock": "Stock",
+      "fieldPhoto": "Product photo",
+      "uploadPhoto": "Upload photo",
+      "uploading": "Uploading...",
+      "urlPlaceholder": "or paste a URL",
+      "fieldMaterial": "Material",
+      "fieldDescription": "Description",
+      "showInCatalog": "Show in catalog",
+      "cancel": "Cancel",
+      "save": "Save",
+      "saving": "Saving...",
+      "stock": "Stock",
+      "hidden": "Hidden",
+      "deleteConfirm": "Delete product? This action cannot be undone."
+    },
+    "media": {
+      "eyebrow": "Media",
+      "title": "Site photos",
+      "description": "Replace the homepage banners. Changes appear on the site within a minute.",
+      "replacePhoto": "Replace photo",
+      "uploading": "Uploading...",
+      "imageLabels": {
+        "hero": "Main banner (Hero)",
+        "editorial": "Lookbook (Editorial)",
+        "about": "About — atelier",
+        "instagram": "Instagram · photo {n}"
+      }
+    },
+    "announcement": {
+      "title": "Announcement bar",
+      "hint": "Each field is a separate message in the announcement bar. Fill it in for each language.",
+      "messagePlaceholder": "Message text",
+      "addMessage": "Add message",
+      "removeMessage": "Delete message",
+      "save": "Save",
+      "saving": "Saving...",
+      "saved": "Saved"
+    }
   }
 }
