@@ -244,6 +244,14 @@
     "total": "Ընդամենը",
     "submit": "Հաստատել պատվերը",
     "submitting": "Ուղարկվում է...",
+    "paymentSection": "Վճարման եղանակ",
+    "payArca": "Բանկային քարտ (ArCa)",
+    "payArcaDesc": "Visa / Mastercard ArCa-ի միջոցով",
+    "payIdram": "Idram",
+    "payIdramDesc": "Idram դրամապանակ",
+    "payDemo": "Դեմո վճարում (բանկի իմիտացիա)",
+    "payDemoDesc": "Ամբողջ հոսքի փորձնական անցում առանց իրական բանկի",
+    "pay": "Անցնել վճարման",
     "afterOrder": "Պատվերը ձևակերպելուց հետո մենք կկապվենք ձեզ հետ՝ մանրամասները և վճարման եղանակը հաստատելու համար։"
   },
   "LanguageSwitcher": {

@@ -244,6 +244,14 @@
     "total": "Total",
     "submit": "Confirm order",
     "submitting": "Sending...",
+    "paymentSection": "Payment method",
+    "payArca": "Bank card (ArCa)",
+    "payArcaDesc": "Visa / Mastercard via ArCa",
+    "payIdram": "Idram",
+    "payIdramDesc": "Idram wallet",
+    "payDemo": "Demo payment (bank simulation)",
+    "payDemoDesc": "Test run of the whole flow without a real bank",
+    "pay": "Proceed to payment",
     "afterOrder": "After you place the order we'll reach out to confirm details and payment."
   },
   "LanguageSwitcher": {

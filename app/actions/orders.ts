@@ -1,6 +1,9 @@
 "use server"
 
+import { after } from "next/server"
 import { createClient } from "@/lib/supabase/server"
+import { createServiceClient } from "@/lib/supabase/service"
+import { sendOrderConfirmation } from "@/lib/email/order-confirmation"
 import type { CartItem } from "@/lib/types"
 
 export type CreateOrderInput = {
@@ -13,6 +16,8 @@ export type CreateOrderInput = {
   shipping_postal?: string
   notes?: string
   items: CartItem[]
+  /** Локаль покупателя для языка письма-подтверждения. */
+  locale?: string
 }
 
 export type CreateOrderResult =
@@ -36,9 +41,14 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
+    // Записи заказа делаем service-role клиентом: гостевой чекаут и RETURNING
+    // не зависят от RLS-политик таблицы orders. Цены ниже перепроверяются из
+    // БД, поэтому клиент не может подменить сумму.
+    const db = createServiceClient()
+
     // Re-fetch product prices from DB to prevent tampering
     const ids = input.items.map((i) => i.product_id)
-    const { data: dbProducts, error: productsError } = await supabase
+    const { data: dbProducts, error: productsError } = await db
       .from("products")
       .select("id, name, slug, price, image_url, stock")
       .in("id", ids)
@@ -70,7 +80,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     const shipping_cost = SHIPPING_COST
     const total = subtotal + shipping_cost
 
-    const { data: order, error: orderError } = await supabase
+    const { data: order, error: orderError } = await db
       .from("orders")
       .insert({
         customer_name: input.customer_name.trim(),
@@ -97,7 +107,7 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     }
 
     const itemsToInsert = validatedItems.map((v) => ({ ...v, order_id: order.id }))
-    const { error: itemsError } = await supabase.from("order_items").insert(itemsToInsert)
+    const { error: itemsError } = await db.from("order_items").insert(itemsToInsert)
 
     if (itemsError) {
       console.log("[v0] order_items insert error:", itemsError)
@@ -107,11 +117,37 @@ export async function createOrder(input: CreateOrderInput): Promise<CreateOrderR
     // Decrement stock
     for (const v of validatedItems) {
       const dbP = productMap.get(v.product_id)!
-      await supabase
+      await db
         .from("products")
         .update({ stock: Math.max(0, dbP.stock - v.quantity) })
         .eq("id", v.product_id)
     }
+
+    // Письмо-подтверждение шлём ПОСЛЕ ответа (after): не задерживает оформление,
+    // а сбой почты не ломает заказ.
+    const emailItems = validatedItems.map((v) => ({
+      product_name: v.product_name,
+      quantity: v.quantity,
+      unit_price: v.unit_price,
+      subtotal: v.subtotal,
+    }))
+    after(async () => {
+      try {
+        await sendOrderConfirmation({
+          to: input.customer_email.trim(),
+          orderNumber: order.order_number,
+          customerName: input.customer_name.trim(),
+          items: emailItems,
+          subtotal,
+          shippingCost: shipping_cost,
+          total,
+          currency: "USD",
+          locale: input.locale,
+        })
+      } catch (e) {
+        console.log("[email] order confirmation failed:", e)
+      }
+    })
 
     return { ok: true, order_id: order.id, order_number: order.order_number }
   } catch (e) {

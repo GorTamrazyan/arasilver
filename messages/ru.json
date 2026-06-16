@@ -244,6 +244,14 @@
     "total": "Итого",
     "submit": "Подтвердить заказ",
     "submitting": "Отправляем...",
+    "paymentSection": "Способ оплаты",
+    "payArca": "Банковская карта (ArCa)",
+    "payArcaDesc": "Visa / Mastercard через ArCa",
+    "payIdram": "Idram",
+    "payIdramDesc": "Кошелёк Idram",
+    "payDemo": "Демо-оплата (имитация банка)",
+    "payDemoDesc": "Тестовый прогон всего флоу без реального банка",
+    "pay": "Перейти к оплате",
     "afterOrder": "После оформления заказа мы свяжемся с вами для подтверждения деталей и способа оплаты."
   },
   "LanguageSwitcher": {

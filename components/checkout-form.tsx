@@ -2,12 +2,17 @@
 
 import Image from "next/image"
 import { useState } from "react"
-import { useTranslations } from "next-intl"
+import { useLocale, useTranslations } from "next-intl"
 import { Link, useRouter } from "@/i18n/navigation"
 import { useCart } from "./cart/cart-provider"
 import { formatPrice } from "@/lib/format"
 import { createOrder } from "@/app/actions/orders"
+import { startPayment } from "@/app/actions/payments"
 import type { Address } from "@/lib/types"
+
+// Демо-способ оплаты показываем только при включённом флаге.
+const DEMO_ENABLED = process.env.NEXT_PUBLIC_PAYMENTS_DEMO === "1"
+type PayMethod = "arca" | "idram" | "mock"
 
 const SHIPPING_COST = 10
 
@@ -24,10 +29,12 @@ type Props = {
 
 export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
   const t = useTranslations("Checkout")
+  const locale = useLocale()
   const { items, subtotal, clear } = useCart()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [method, setMethod] = useState<PayMethod>(DEMO_ENABLED ? "mock" : "arca")
 
   // Controlled shipping fields so saved address can autofill them
   const [address, setAddress] = useState("")
@@ -60,19 +67,33 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
       shipping_postal: postal || String(fd.get("postal") ?? ""),
       notes: String(fd.get("notes") ?? ""),
       items,
+      locale,
     })
 
-    if (result.ok) {
-      clear()
-      const isGuest = !userPrefill
-      const email = String(fd.get("email") ?? "")
-      const query = new URLSearchParams({ number: result.order_number })
-      if (isGuest) query.set("email", email)
-      router.push(`/order/${result.order_id}?${query}`)
-    } else {
+    if (!result.ok) {
       setError(result.error)
       setLoading(false)
+      return
     }
+
+    clear()
+
+    // Заказ создан (status=pending). Стартуем оплату через выбранного провайдера
+    // и уводим покупателя на форму банка (или демо-страницу).
+    const pay = await startPayment(result.order_id, method, locale)
+    if (pay.ok) {
+      window.location.href = pay.redirectUrl
+      return
+    }
+
+    // Инициализация оплаты не удалась (например, ArCa/Idram ещё без доступов).
+    // Заказ не теряем — ведём на страницу заказа и показываем причину.
+    setError(pay.error)
+    const isGuest = !userPrefill
+    const email = String(fd.get("email") ?? "")
+    const query = new URLSearchParams({ number: result.order_number })
+    if (isGuest) query.set("email", email)
+    router.push(`/order/${result.order_id}?${query}`)
   }
 
   if (items.length === 0) {
@@ -203,6 +224,15 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
           </label>
         </fieldset>
 
+        <fieldset className="space-y-3">
+          <legend className="mb-4 text-xs tracking-[0.25em] text-muted-foreground uppercase">{t("paymentSection")}</legend>
+          <PaymentOption value="arca" current={method} onSelect={setMethod} title={t("payArca")} desc={t("payArcaDesc")} />
+          <PaymentOption value="idram" current={method} onSelect={setMethod} title={t("payIdram")} desc={t("payIdramDesc")} />
+          {DEMO_ENABLED && (
+            <PaymentOption value="mock" current={method} onSelect={setMethod} title={t("payDemo")} desc={t("payDemoDesc")} />
+          )}
+        </fieldset>
+
         {error && (
           <div className="border border-destructive/50 bg-destructive/5 px-4 py-3 text-sm text-destructive">
             {error}
@@ -251,7 +281,7 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
           disabled={loading}
           className="mt-6 flex w-full items-center justify-center gap-2 bg-foreground py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60"
         >
-          {loading ? t("submitting") : t("submit")}
+          {loading ? t("submitting") : t("pay")}
         </button>
 
         <p className="mt-4 text-center text-[11px] leading-relaxed text-muted-foreground">
@@ -259,6 +289,42 @@ export function CheckoutForm({ userPrefill, savedAddresses = [] }: Props) {
         </p>
       </aside>
     </form>
+  )
+}
+
+function PaymentOption({
+  value,
+  current,
+  onSelect,
+  title,
+  desc,
+}: {
+  value: PayMethod
+  current: PayMethod
+  onSelect: (m: PayMethod) => void
+  title: string
+  desc: string
+}) {
+  const active = current === value
+  return (
+    <label
+      className={`flex cursor-pointer items-start gap-3 border px-4 py-3 transition-colors ${
+        active ? "border-foreground bg-secondary/40" : "border-border hover:border-foreground/50"
+      }`}
+    >
+      <input
+        type="radio"
+        name="paymentMethod"
+        value={value}
+        checked={active}
+        onChange={() => onSelect(value)}
+        className="mt-1 accent-foreground"
+      />
+      <span className="flex flex-col">
+        <span className="text-sm">{title}</span>
+        <span className="mt-0.5 text-xs text-muted-foreground">{desc}</span>
+      </span>
+    </label>
   )
 }
 
