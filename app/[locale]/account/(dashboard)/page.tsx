@@ -21,9 +21,9 @@ export default async function AccountDashboardPage() {
     .limit(3)
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-12 sm:space-y-16">
 
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
         <Stat label="Заказов" value={String(orderCount ?? 0)} href="/account/orders" />
         <Stat label="Избранных" value={String(wishlistCount ?? 0)} href="/account/wishlist" />
       </div>
@@ -59,7 +59,7 @@ export default async function AccountDashboardPage() {
         </div>
       )}
 
-      <div className="p-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <QuickLink href="/account/orders" label="История заказов" />
         <QuickLink href="/account/wishlist" label="Избранное" />
         <QuickLink href="/account/addresses" label="Адреса доставки" />
@@ -73,9 +73,9 @@ export default async function AccountDashboardPage() {
 
 function Stat({ label, value, href }: { label: string; value: string; href: string }) {
   return (
-    <Link href={href} className="block border border-border bg-secondary/30 p-10 transition-colors hover:bg-secondary/50">
+    <Link href={href} className="block border border-border bg-secondary/30 p-7 transition-colors hover:bg-secondary/50 sm:p-10">
       <p className="text-[10px] tracking-[0.3em] text-muted-foreground uppercase">{label}</p>
-      <p className="mt-4 font-serif text-5xl tabular-nums">{value}</p>
+      <p className="mt-4 font-serif text-4xl tabular-nums sm:text-5xl">{value}</p>
     </Link>
   )
 }

@@ -87,8 +87,8 @@ export function AddressesManager({ initialAddresses }: { initialAddresses: Addre
 
       <div className="space-y-3">
         {addresses.map((addr) => (
-          <div key={addr.id} className="border border-border p-7">
-            <div className="flex items-start justify-between gap-4">
+          <div key={addr.id} className="border border-border p-5 sm:p-7">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div>
                 <p className="font-serif text-base">{addr.full_name}</p>
                 <p className="mt-1 text-sm text-muted-foreground">{addr.street}, {addr.city}</p>
@@ -98,10 +98,10 @@ export function AddressesManager({ initialAddresses }: { initialAddresses: Addre
                   <span className="mt-2 inline-block text-[10px] tracking-[0.2em] text-foreground uppercase">По умолчанию</span>
                 )}
               </div>
-              <div className="flex flex-col gap-2 text-right shrink-0">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-border/60 pt-4 sm:flex-col sm:items-end sm:gap-2 sm:border-t-0 sm:pt-0 sm:text-right">
                 <button
                   onClick={() => openEdit(addr)}
-                  className="text-xs tracking-[0.15em] text-muted-foreground uppercase hover:text-foreground"
+                  className="py-1 text-xs tracking-[0.15em] text-muted-foreground uppercase hover:text-foreground sm:py-0"
                 >
                   Изменить
                 </button>
@@ -109,7 +109,7 @@ export function AddressesManager({ initialAddresses }: { initialAddresses: Addre
                   <button
                     onClick={() => handleSetDefault(addr.id)}
                     disabled={isPending}
-                    className="text-xs tracking-[0.15em] text-muted-foreground uppercase hover:text-foreground"
+                    className="py-1 text-xs tracking-[0.15em] text-muted-foreground uppercase hover:text-foreground sm:py-0"
                   >
                     По умолчанию
                   </button>
@@ -117,7 +117,7 @@ export function AddressesManager({ initialAddresses }: { initialAddresses: Addre
                 <button
                   onClick={() => handleDelete(addr.id)}
                   disabled={isPending}
-                  className="text-xs tracking-[0.15em] text-muted-foreground uppercase hover:text-destructive"
+                  className="py-1 text-xs tracking-[0.15em] text-muted-foreground uppercase hover:text-destructive sm:py-0"
                 >
                   Удалить
                 </button>
@@ -137,7 +137,7 @@ export function AddressesManager({ initialAddresses }: { initialAddresses: Addre
       )}
 
       {showForm && (
-        <form onSubmit={onSubmit} className="space-y-6 border border-border p-8">
+        <form onSubmit={onSubmit} className="space-y-6 border border-border p-5 sm:p-8">
           <p className="text-xs tracking-[0.25em] text-muted-foreground uppercase">
             {editing ? "Изменить адрес" : "Новый адрес"}
           </p>
@@ -161,18 +161,18 @@ export function AddressesManager({ initialAddresses }: { initialAddresses: Addre
           {error && (
             <p className="text-sm text-destructive">{error}</p>
           )}
-          <div className="flex gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <button
               type="submit"
               disabled={isPending}
-              className="bg-foreground px-8 py-3 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60"
+              className="w-full bg-foreground px-8 py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60 sm:w-auto sm:py-3"
             >
               {isPending ? "Сохраняем..." : "Сохранить"}
             </button>
             <button
               type="button"
               onClick={cancelForm}
-              className="px-8 py-3 text-xs tracking-[0.25em] text-muted-foreground uppercase hover:text-foreground"
+              className="w-full px-8 py-3 text-xs tracking-[0.25em] text-muted-foreground uppercase hover:text-foreground sm:w-auto"
             >
               Отмена
             </button>
@@ -204,7 +204,7 @@ function Field({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
-        className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+        className="w-full border border-border bg-background px-4 py-3.5 text-base focus:border-foreground focus:outline-none sm:py-3 sm:text-sm"
       />
     </label>
   )

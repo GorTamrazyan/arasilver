@@ -51,7 +51,7 @@ export function ProfileForm({ fullName, phone, email }: Props) {
   }
 
   return (
-    <div className="space-y-16">
+    <div className="space-y-12 sm:space-y-16">
       <form onSubmit={onProfileSubmit} className="space-y-6 max-w-lg">
         <h2 className="font-serif text-2xl">Личные данные</h2>
         <label className="block">
@@ -61,7 +61,7 @@ export function ProfileForm({ fullName, phone, email }: Props) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+            className="w-full border border-border bg-background px-4 py-3.5 text-base focus:border-foreground focus:outline-none sm:py-3 sm:text-sm"
           />
         </label>
         <label className="block">
@@ -70,7 +70,7 @@ export function ProfileForm({ fullName, phone, email }: Props) {
             type="email"
             value={email}
             disabled
-            className="w-full border border-border bg-secondary/30 px-4 py-3 text-sm text-muted-foreground"
+            className="w-full border border-border bg-secondary/30 px-4 py-3.5 text-base text-muted-foreground sm:py-3 sm:text-sm"
           />
         </label>
         <label className="block">
@@ -80,7 +80,7 @@ export function ProfileForm({ fullName, phone, email }: Props) {
             value={phoneVal}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="+7 ..."
-            className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+            className="w-full border border-border bg-background px-4 py-3.5 text-base focus:border-foreground focus:outline-none sm:py-3 sm:text-sm"
           />
         </label>
         {profileMsg && (
@@ -89,7 +89,7 @@ export function ProfileForm({ fullName, phone, email }: Props) {
         <button
           type="submit"
           disabled={profileLoading}
-          className="bg-foreground px-8 py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60"
+          className="w-full bg-foreground px-8 py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60 sm:w-auto"
         >
           {profileLoading ? "Сохраняем..." : "Сохранить"}
         </button>
@@ -105,7 +105,7 @@ export function ProfileForm({ fullName, phone, email }: Props) {
               value={current}
               onChange={(e) => setCurrent(e.target.value)}
               required
-              className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+              className="w-full border border-border bg-background px-4 py-3.5 text-base focus:border-foreground focus:outline-none sm:py-3 sm:text-sm"
             />
           </label>
           <label className="block">
@@ -116,7 +116,7 @@ export function ProfileForm({ fullName, phone, email }: Props) {
               onChange={(e) => setNext(e.target.value)}
               required
               minLength={6}
-              className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+              className="w-full border border-border bg-background px-4 py-3.5 text-base focus:border-foreground focus:outline-none sm:py-3 sm:text-sm"
             />
           </label>
           <label className="block">
@@ -127,7 +127,7 @@ export function ProfileForm({ fullName, phone, email }: Props) {
               onChange={(e) => setConfirm(e.target.value)}
               required
               minLength={6}
-              className="w-full border border-border bg-background px-4 py-3 text-sm focus:border-foreground focus:outline-none"
+              className="w-full border border-border bg-background px-4 py-3.5 text-base focus:border-foreground focus:outline-none sm:py-3 sm:text-sm"
             />
           </label>
           {passMsg && (
@@ -136,7 +136,7 @@ export function ProfileForm({ fullName, phone, email }: Props) {
           <button
             type="submit"
             disabled={passLoading}
-            className="bg-foreground px-8 py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60"
+            className="w-full bg-foreground px-8 py-4 text-xs tracking-[0.25em] text-background uppercase transition-opacity hover:opacity-90 disabled:opacity-60 sm:w-auto"
           >
             {passLoading ? "Сохраняем..." : "Изменить пароль"}
           </button>

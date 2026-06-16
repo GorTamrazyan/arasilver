@@ -3,8 +3,13 @@ import { setRequestLocale } from "next-intl/server"
 import { createClient } from "@/lib/supabase/server"
 import { SiteNav } from "@/components/site-nav"
 import { SiteFooter } from "@/components/site-footer"
+import type { Metadata } from "next"
 
 export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 export default async function OrderPage({
   params,

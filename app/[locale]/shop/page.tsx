@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { getTranslations, setRequestLocale } from "next-intl/server"
 import { createPublicClient } from "@/lib/supabase/public"
 import { SiteNav } from "@/components/site-nav"
@@ -5,8 +6,39 @@ import { SiteFooter } from "@/components/site-footer"
 import { ProductCard } from "@/components/product-card"
 import { CategoryFilters } from "@/components/category-filters"
 import type { Product, ProductCategory } from "@/lib/types"
+import { buildAlternates } from "@/lib/seo"
 
 export const revalidate = 60
+
+const VALID_CATEGORIES: ProductCategory[] = ["rings", "earrings", "pendants", "bracelets", "necklaces"]
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>
+  searchParams: Promise<{ category?: string }>
+}): Promise<Metadata> {
+  const { locale } = await params
+  const { category } = await searchParams
+  const t = await getTranslations({ locale, namespace: "Shop" })
+  const tCategories = await getTranslations({ locale, namespace: "Categories" })
+
+  const isCategory = category && VALID_CATEGORIES.includes(category as ProductCategory)
+  const title = isCategory ? tCategories(category as ProductCategory) : `${t("titlePart1")} ${t("titleItalic")}`
+
+  return {
+    title,
+    description: t("lede"),
+    // Canonical points to the clean /shop URL so filtered views don't compete.
+    alternates: buildAlternates(locale, "/shop"),
+    openGraph: {
+      title,
+      description: t("lede"),
+      url: buildAlternates(locale, "/shop").canonical,
+    },
+  }
+}
 
 export default async function ShopPage({
   params,
@@ -21,9 +53,8 @@ export default async function ShopPage({
   const { category } = await searchParams
   const supabase = createPublicClient()
 
-  const validCategories: ProductCategory[] = ["rings", "earrings", "pendants", "bracelets", "necklaces"]
   const activeCategory =
-    category && validCategories.includes(category as ProductCategory) ? (category as ProductCategory) : null
+    category && VALID_CATEGORIES.includes(category as ProductCategory) ? (category as ProductCategory) : null
 
   let query = supabase
     .from("products")

@@ -4,8 +4,13 @@ import { SiteNav } from "@/components/site-nav"
 import { SiteFooter } from "@/components/site-footer"
 import { CheckoutForm } from "@/components/checkout-form"
 import type { Address } from "@/lib/types"
+import type { Metadata } from "next"
 
 export const dynamic = "force-dynamic"
+
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+}
 
 export default async function CheckoutPage({
   params,
